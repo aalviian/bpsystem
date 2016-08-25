@@ -9,7 +9,7 @@
         <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
 
-
+ 
         <link href="{{ asset('assets/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
@@ -18,10 +18,10 @@
         <link href="{{ asset('assets/vendors/summernote/dist/summernote.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
-
+ 
     @endsection
 
-   @section('leftNavbar')
+    @section('leftNavbar')
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
@@ -50,23 +50,26 @@
                             <li>
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
-                            @foreach($survey as $f_survey)
-                                <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
+                            @foreach($survey as $survei)
+                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{$id_survey}}</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
                         <ul>
-                            @foreach($tahapan_Survey as $f_tahapan)
-                            <li>
-                                <a href="{{ url($id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan -> nama_tahapan }}</a>
-                            </li>
-                            @endforeach
+                                @foreach($tahapanSurvey2 as $f_tahapan)
+                                <li>
+                                    <?php
+                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                    ?>
+                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                </li>
+                                @endforeach
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
                     <li @yield('privilege')>
                         <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
@@ -93,6 +96,7 @@
                 </ul>
         </aside>
     @endsection
+
 
 
     @section('content')

@@ -60,23 +60,26 @@
                             <li>
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
-                            @foreach($survey as $f_Survey)
-                                <li><a href="{{ url($f_Survey->id_Survey) }}">{{$f_Survey->id_Survey}}</a></li>
+                            @foreach($survey as $survei)
+                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
                         <ul>
-                                @foreach($tahapan as $f_Tahapan)
+                                @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
-                                    <a href="{{ url($id_Survey.'/'.$f_Tahapan->id_Tahapan.'/input') }}">{{ $f_Tahapan -> nama_Tahapan }}</a>
+                                    <?php
+                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                    ?>
+                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url('/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
                     <li @yield('privilege')>
                         <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
@@ -110,16 +113,14 @@
                 <div class="container">
                     <ol class="breadcrumb" style="margin-bottom: 5px;">
                       <li><a href="{{URL('/')}}">Home</a></li>
-                      <?php $bc_Survey=DB::table('survey')->where('id_Survey',$id_Survey)->first(); 
-                            $bc_Tahapan=DB::table('tahapansurvey')
-                                        ->where('id_Survey', $id_Survey)
-                                        ->where('id_Tahapan', $id_Tahapan)->first();?>
-                      <li><a href="{{ url($bc_Survey->id_Survey) }}">{{ $bc_Survey -> nama_Survey }}</a></li>
-                      <li><a>{{ $bc_Tahapan -> nama_Tahapan}}</a></li>
+                      <?php $bc_Survey=DB::table('survey')->where('id_survey',$id_survey)->first(); 
+                            $bc_Tahapan=DB::table('tahapansurvey') ->where('id_survey', $id_survey)->where('id_tahapan', $id_tahapan)->first();?>
+                      <li><a href="{{ url($bc_Survey->id_survey) }}">{{ $bc_Survey -> nama_survey }}</a></li>
+                      <li>{{ $bc_Tahapan -> nama_tahapan}}</li>
                     </ol>
                     <div class="card">
                        <div class="card-header">
-                            <h2>Dashboard <h3>Progress Monitoring {{$id_Survey}} - {{ $bc_Tahapan -> nama_Tahapan}}</h3></h2>
+                            <h2>Dashboard <h3>Progress Monitoring {{$id_survey}} - {{ $bc_Tahapan -> nama_tahapan}}</h3></h2>
 
                             <ul class="actions">
                                 <div class="btn-group">
@@ -129,10 +130,10 @@
                                         <span class="sr-only">Split button dropdowns</span>
                                     </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    @foreach($tahapan as $f_tahapan)
-                                    <li>
-                                        <a href="{{ url($id_Survey.'/'.$f_tahapan->id_Tahapan) }}">{{ $f_tahapan -> nama_Tahapan }}</a>
-                                    </li>
+                                    @foreach($tahapanSurvey2 as $tahapan)
+                                        @if($tahapan->id_survey==$survey2->id_survey)
+                                            <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
+                                        @endif
                                     @endforeach
                                 </ul>
                               </div>

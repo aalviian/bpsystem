@@ -19,12 +19,14 @@ class SurveyController extends Controller
     public function index()
     {  
         $user = DB::table('users')->where('username', session::get('username'))->first();
+        $level=$user->level_user;
+
         $survey=DB::table('survey')->get();
-        if(Session::has('username')){
+        if($level == "1") {
             return view('role.superadmin.createsurvey', compact('user', 'survey'));
         }else{
-            Alert::message("Anda belum login..");
-            return redirect('login');
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
         } 
     }
 
@@ -191,13 +193,36 @@ class SurveyController extends Controller
     } 
 
     public function survey($id_survey){
-        $user=DB::table('users')->where('username', Session::get('username'))->first();
-        $survey=DB::table('survey')->get();
-        $now2 = date('Y');
-        $survey2=DB::table('survey')->where('id_Survey', $id_survey)->first();
-        $tahapanSurvey = DB::table('tahapanSurvey')->where('id_survey', $id_survey)->get();
+        if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
+            $user=DB::table('users') -> where('username', Session::get('username')) -> first();
+            $level=$user->level_user;
 
-        return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','now2','tahapanSurvey','survey2'));
+            $survey = DB::table('survey')->get();
+            $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+            $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
+
+            return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','$survey2','tahapanSurvey2','survey2'));
+        }
+        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        if($users) {   
+            $user=DB::table('users') -> where('username', Session::get('username')) -> first();
+            $level=$users->hakakses;
+
+            $survey = DB::table('survey')->get();
+            $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+            $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
+
+            if($level) {
+                return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','$survey2','tahapanSurvey2','survey2'));
+            }
+            else {
+                return back();
+            }
+        }
+        else {
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
+        }
     }
 
 

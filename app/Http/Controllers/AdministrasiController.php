@@ -10,33 +10,47 @@ use Session;
 use Schema;
 use Excel;
 use Alert;
-
+ 
 use App\Http\Requests;
 
 class AdministrasiController extends Controller
 {
     //VIEW ADMINISTRASI
     public function index($id_survey){
-        if(session::has('username')){
+        if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
         	$user = DB::table('users')->where('username', session::get('username'))->first();
             $level=$user->level_user;
-        	$survey = DB::table('survey')->get();
-        	$tahapan_Survey = DB::table('tahapansurvey')->where('id_survey', $id_survey)->get();
+
+            $survey = DB::table('survey')->get();
+            $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+            $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
         	$daftarHakAkses = DB::table($id_survey.'-hakakses')->get();
             $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
             $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->where('nama_wilayah', $daftarWilayah[count($daftarWilayah)-1]->nama_wilayah)->first();
-            if($level == 1){
-        	   return view('role.superadmin.administrasi', compact('user', 'id_survey', 'survey', 'tahapan_Survey', 'daftarHakAkses','wilayah'));
+            return view('role.superadmin.administrasi', compact('user', 'id_survey', 'survey','survey2','tahapanSurvey2', 'daftarHakAkses','wilayah'));
+        }
+        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        if($users) {
+            $user = DB::table('users')->where('username', session::get('username'))->first();
+            $level= $users->hakakses;
+
+            $survey = DB::table('survey')->get();
+            $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+            $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
+            $daftarHakAkses = DB::table($id_survey.'-hakakses')->get();
+            $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
+            $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->where('nama_wilayah', $daftarWilayah[count($daftarWilayah)-1]->nama_wilayah)->first();
+            if($level) {
+                return view('role.superadmin.administrasi', compact('user', 'id_survey','survey','survey2','tahapanSurvey2', 'daftarHakAkses','wilayah'));
             }
-            if($level == 2){
-               return view('role.admin.administrasi', compact('user', 'id_survey', 'survey', 'tahapan_Survey', 'daftarHakAkses','wilayah'));         
+            else {
+                return back();
             }
-            if($level == 3){
-               return view('role.operator.administrasi', compact('user', 'id_survey', 'survey', 'tahapan_Survey', 'daftarHakAkses','wilayah'));         
-            }
-            if($level == 3){
-               return view('role.operator.administrasi', compact('user', 'id_survey', 'survey', 'tahapan_Survey', 'daftarHakAkses','wilayah'));         
-            }
+        }
+        else {
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
+        }
 
     }
     //tambah hak akses

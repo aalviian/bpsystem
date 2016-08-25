@@ -27,8 +27,10 @@
         <link href="{{ asset('assets/css/app.min.1.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/app.min.2.css') }}" rel="stylesheet"> 
 
-    </head>
+    </head> 
+    @if(session::get('username'))
     <input type="hidden" id="name" value="{{ $user->name }}">
+    @endif
     <body data-ma-header="teal">
         <header id="header" class="media">
             <div class="pull-left h-logo">

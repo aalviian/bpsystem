@@ -16,10 +16,10 @@ use Illuminate\Support\Str;
 class InputController extends Controller
 {
     public function index($id_survey,$id_tahapan) {
-        if(session::has('username')){
-            $user=DB::table('users')
-                ->where('username', session::get('username'))
-                ->first();
+        if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
+            $user=DB::table('users')->where('username', session::get('username')) ->first();
+            $level=$user->level_user;
+
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapan = DB::table('tahapansurvey') ->where('id_tahapan',$id_tahapan)->where('id_survey', $id_survey)->first();
@@ -27,10 +27,28 @@ class InputController extends Controller
             $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
             return view('role.superadmin.inputprogress',compact('user','id_survey','id_tahapan','survey','survey2','tahapan','tahapanSurvey2','daftarWilayah'));
         }
-        else{
-            Alert::message("Anda belum login..");
-            return redirect('login');
-        }  
+        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        if($users){
+            $user=DB::table('users') -> where('username', Session::get('username')) -> first();
+            $level=$users->hakakses;
+
+            $survey = DB::table('survey')->get();
+            $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+            $tahapan = DB::table('tahapansurvey') ->where('id_tahapan',$id_tahapan)->where('id_survey', $id_survey)->first();
+            $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
+            $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
+
+            if($level) {
+                return view('role.superadmin.inputprogress',compact('user','id_survey','id_tahapan','survey','survey2','tahapan','tahapanSurvey2','daftarWilayah'));
+            }
+            else {
+                return back();
+            }          
+        }
+        else {
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
+        }
     }
 
     public function tambah($id_survey, $id_tahapan) {

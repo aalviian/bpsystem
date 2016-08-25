@@ -312,7 +312,7 @@ div.box {
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url('/administrasi'.'/'.$survey2->id_survey) }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
                     <li @yield('privilege')>
                         <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>

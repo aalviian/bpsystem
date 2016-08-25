@@ -66,25 +66,25 @@
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url($survei->id_Survey) }}">{{$survei->id_Survey}}</a></li>
+                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
                         <ul>
-                                @foreach($tahapanSurvey2 as $tahapan)
+                                @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
                                     <?php
-                                        $survei2 = DB::table('survey') -> where('id_Survey', $tahapan -> id_Survey) -> first();
+                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
                                     ?>
-                                    <a href="{{ url($survei->id_Survey.'/'.$tahapan->id_Tahapan.'/inputprogress') }}">{{ $tahapan -> nama_Tahapan }}</a>
+                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url('/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
                     <li @yield('privilege')>
                         <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
@@ -119,7 +119,7 @@
                     <ol class="breadcrumb" style="margin-bottom: 5px;">
                       <li><a href="{{URL('/')}}">Home</a></li>
                       <li><a href="{{ url('survey/'.$survey2->id_Survey)  }}">{{ $survey2 -> nama_Survey}}</a></li>
-                      <li><a href="{{ url('survey/'.$survei->id_Survey.'/'.$tahapanSurvey3->id_Tahapan) }}">{{ $tahapanSurvey3 -> nama_Tahapan}}</a></li>
+                      <li>{{ $tahapanSurvey3 -> nama_Tahapan }}dd</li>
                     </ol>
                     <div class="card">
                        <div class="card-header">

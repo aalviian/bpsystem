@@ -56,25 +56,38 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/') }}"><i class="zmdi zmdi-home"></i> Home</a>
+                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Home</a>
                     </li>
-                    
+
                     <li class="sub-menu">
                         <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('createsurvey') }}"> Create new</a>
+                                <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
-                            @foreach($survey as $f_survey)
-                                <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
+                            @foreach($survey as $survei)
+                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
-                    <li @yield('datainput')>
-                        <a href="{{ url('/datainput') }}"><i class="zmdi zmdi-view-list"></i> Data Input</a>
+                    <li class="sub-menu">
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
+                        <ul>
+                                @foreach($tahapanSurvey2 as $f_tahapan)
+                                <li>
+                                    <?php
+                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                    ?>
+                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                </li>
+                                @endforeach
+                        </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
+                    </li>
+                    <li @yield('privilege')>
+                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
                     </li>
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
@@ -96,7 +109,7 @@
                         </ul>
                     </li>
                 </ul>
-            </aside>
+        </aside>
     @endsection
 
     @section('content')
@@ -105,22 +118,26 @@
                 <div class="container">                    
                     <ol class="breadcrumb" style="margin-bottom: 5px;">
                       <li><a href="{{URL('/')}}">Home</a></li>
+                      <li>{{$id_survey}}</li>
                     </ol>
                     <div class="card">
                        <div class="card-header">
                             <h2>Dashboard <h3>Monitoring Survey {{$survey2->id_survey}}</h3></h2>
-
                             <ul class="actions">
-                                <a href="" data-toggle="dropdown">
+                                <div class="btn-group">
                                     <button class="btn palette-Teal bg">Program Kegiatan</button>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    @foreach($tahapanSurvey as $tahapan)
+                                    <button type="button" class="btn palette-Teal bg dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Split button dropdowns</span>
+                                    </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    @foreach($tahapanSurvey2 as $tahapan)
                                         @if($tahapan->id_survey==$survey2->id_survey)
                                             <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
                                         @endif
                                     @endforeach
                                 </ul>
+                              </div>
                             </ul>
                         </div>
                     </div>
@@ -135,7 +152,7 @@
                         
                         <div class="card-body card-padding">
                             <div class="pm-body clearfix">
-                            @foreach($tahapanSurvey as $tahapan)
+                            @foreach($tahapanSurvey2 as $tahapan)
                                 <div class="col-xs-3">
                                     <p>{{$tahapan->nama_tahapan}}</p>
                                     <div class="c100 p0">
@@ -160,7 +177,7 @@
 
                         <div class="card-body card-padding">
                           <div class="pm-body clearfix">
-                            @foreach($tahapanSurvey as $tahapan)
+                            @foreach($tahapanSurvey2 as $tahapan)
                             <div class="col-xs-3">
                                 <p>{{$tahapan->nama_tahapan}}</p>
                                 <img src="{{ asset('assets/img/clock.png') }}" width="100" height="100" alt="">
