@@ -63,6 +63,17 @@ $(document).ready(function() {
             +       '<input type="hidden" class="form-control input-sm" id="tahapan_selesai" name="tahapan_selesai[]" value="'+tahapan_selesai+'">'
             +        tahapan_selesai
             +   '</td>'
+            +   '<td class="form-group">'
+            +       '<div class="fileinput fileinput-new form-control col-md-7 col-xs-12" data-provides="fileinput">'
+            +           '<span class="btn btn-primary btn-file m-r-10">'
+            +               '<span class="fileinput-new">Select file</span>'
+            +               '<span class="fileinput-exists">Change</span>'
+            +               '<input id="target'+count_tahapan+'" type="file" name="target'+count_tahapan+'">'
+            +           '</span>'
+            +           '<span class="fileinput-filename"></span>'
+            +           '<a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>'
+            +       '</div>'
+            +   '</td>'
         );
         for(var i=0; i<data_tahapan.length ; i++){
             $('#con_tahapan').append(

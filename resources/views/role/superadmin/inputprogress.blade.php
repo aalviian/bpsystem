@@ -349,7 +349,34 @@ div.box {
               <li><a href="{{url($id_survey) }}">{{ $survey2 -> id_survey }}</a></li>
               <li><a href="{{url($id_survey.'/'.$tahapan->id_tahapan)}}">{{ $tahapan -> nama_tahapan }}</a>
               <li>Input</li>
-            </ol>
+            </ol> 
+            <div class="card">
+                <div class="card-header">
+                    <h2>Remember :<small>
+                    1. Define your survey's name <br>
+                    2. Assign a number of phase <br>
+                    3. Determine an admin of survey Extend form controls by adding text or buttons before, after, or on both sides of any text-based inputs.</small></h2>
+                    <br>
+                     <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                        @foreach ($survey as $f_survey)
+                          <li class="dropdown-submenu">
+                            <a class="test" tabindex="-1" href="#">{{ $f_survey -> nama_survey }} ( {{$f_survey -> id_survey}} )<span class="caret"></span></a>
+                            <ul class="dropdown-submenu">
+                            @foreach ($tahapanSurvey2 as $f_tahapanSurvey2)
+                                  <li><a class="test" tabindex="-1" href="#">{{ $f_tahapanSurvey2 -> nama_tahapan }}</a></li>
+                            @endforeach
+                            </ul>
+                          </li>
+                        @endforeach
+                        </ul>
+                      </div>
+                </div>
+            </div>
+
+            @if($level=="Admin" || $level=="Operator" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
             <div class="card">
                 <div class="card-header">
                     <h2><img src="{{ asset('assets/img/input.png') }}"  width="40" height="40" > Input Progres {{ $tahapan -> nama_tahapan}}</h2>
@@ -364,16 +391,17 @@ div.box {
                             <p>Input data dengan form</p>
                             @foreach ($daftarWilayah as $f_daftarWilayah)
                                 <p class="f-500 m-b-15 c-black">{{$f_daftarWilayah->nama_wilayah}} :</p>
-                                <select class="selectpicker" data-live-search="true" name="wilayah{{$count_wil}}" required>
+                                <select id="{{$f_daftarWilayah->nama_wilayah}}" name="{{$f_daftarWilayah->nama_wilayah}}" >
                                     <?php
                                     $dataWilayah = DB::table($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah)->get();
                                     $nameWilayah = Schema::getColumnListing($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah);
                                     $count = count($nameWilayah);
                                     ?>
-                                                    
-                                    @foreach($dataWilayah as $f_dataWilayah)
-                                    <option value="{{$f_dataWilayah->$nameWilayah[0]}}">({{$f_dataWilayah->$nameWilayah[0]}}} {{ $f_dataWilayah->$nameWilayah[$count-1] }}</option>
+                                     <option value="">--</option>
+                                                  @foreach($dataWilayah as $f_dataWilayah)
+                                    <option value="{{$f_dataWilayah->$nameWilayah[0]}}" @if($count == 3) class="{{$f_dataWilayah->$nameWilayah[1]}}" @endif>({{$f_dataWilayah->$nameWilayah[0]}}} {{ $f_dataWilayah->$nameWilayah[$count-1] }}</option>
                                     @endforeach
+
                                 </select>
                                 <input type="hidden" name="count_wil[]" value="{{$count_wil++}}">
                                 <br>
@@ -385,19 +413,19 @@ div.box {
                                 $typetahapan = DB::select("select data_type from information_schema.columns where table_name='$id_survey-$tahapan->nama_tahapan'");
                                 $count_input=1;
                                 $count=DB::table('wilayah')->where('id_survey', $id_survey)->get();
-                                for($i=count($count);$i<$counttahapan-4;$i++){ ?>
+                                for($i=count($count);$i<$counttahapan-5;$i++){ ?>
                                     <p class="f-500 m-b-15 c-black">{{ $nametahapan[$i] }}</p>
                                     <input type="<?php if($typetahapan[$i]->data_type=='varchar') echo 'text'; else echo 'number'; ?>" class="form-control input-mask" name="input{{ $count_input }}" required>
                                     <input type="hidden" name="count_input[]" value="<?php echo $count_input++ ?>">
                                     <br>
                             <?php      
-                                } 
+                                }
                             ?>  
                             <button class="btn btn-primary">Simpan</button>       
                         </div>   
                         </form>
                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                        <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambahdgnfile') }}" enctype="multipart/form-data">
+                        <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambah/file') }}" enctype="multipart/form-data">
                          {!! csrf_field() !!}
                          <div class="col-sm-6 m-b-20">
                             <p>Input data dengan file excel (.xlsx)</p>
@@ -415,43 +443,55 @@ div.box {
                          </div>
                         </form>
                     </div>   
-                </div> 
-
-                    <div class="card-body card-padding">
-                        <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered">
-                                <thead>
-                                   <?php
-                                        $ambildata = DB::table($id_survey.'-'.$tahapan -> nama_tahapan) -> get();
-                                        $ambilkolom = Schema::getColumnListing($id_survey.'-'.$tahapan -> nama_tahapan);
-                                        $count = count($ambilkolom);
-                                    ?>
-                                            <tr>
-                                            <?php for($i=0;$i<$count;$i++) { ?>
-                                                <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
-                                            <?php } ?>
-                                            </tr>
-                                </thead>
-                                <tbody>
-                                    <?php $i=0; ?>
-                                    @foreach($ambildata as $f_ambildata)
-                                        <tr>
-                                        <?php for($i=0;$i<$count;$i++) { ?> 
-                                            <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
-                                        <?php } ?> 
-                                        </tr>
-                                    @endforeach    
-                                </tbody>  
-                            </table>
-                        </div>
-                    </div>   
+                </div>    
             </div>  
+            @endif  
+
+            <div class="card">
+                <div class="card-header cw-header palette-Blue-400 bg">
+                    <h2><font color="white">Tabel Data Input {{$id_survey}}</font></h2>
+                    <a  data-toggle="modal" href="#TambahHakAkses"></a>
+                </div>
+
+                <div class="card-body card-padding">
+                <br>
+                <br>
+                  <div class="table-responsive">
+                      <table id="datatable-buttons" class="table table-striped table-bordered">
+                          <thead>
+                             <?php
+                                  $ambildata = DB::table($id_survey.'-'.$tahapan -> nama_tahapan) -> get();
+                                  $ambilkolom = Schema::getColumnListing($id_survey.'-'.$tahapan -> nama_tahapan);
+                                  $count = count($ambilkolom);
+                              ?>
+                                      <tr>
+                                      <?php for($i=0;$i<$count;$i++) { ?>
+                                          <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
+                                      <?php } ?>
+                                      </tr>
+                          </thead>
+                          <tbody>
+                              <?php $i=0; ?>
+                              @foreach($ambildata as $f_ambildata)
+                                  <tr>
+                                  <?php for($i=0;$i<$count;$i++) { ?> 
+                                      <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
+                                  <?php } ?> 
+                                  </tr>
+                              @endforeach    
+                          </tbody>  
+                      </table>
+                  </div>
+                </div>
+            </div>   
+          </div>  
 </section>
 
 @endsection
 
 @section('js')
         <!-- Javascript Libraries -->
+        <script src="{{asset('assets/js/jquery.chained.min.js')}}"></script>
         <script src="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/Waves/dist/waves.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script>
@@ -481,6 +521,9 @@ div.box {
         <script src="{{ asset('assets/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/line-chart.js') }}"></script>
+   <script type="text/javascript">
+      $("#Kabkot").chained("#Provinsi");
+   </script>
    <!-- Datatables -->
     <script>
       $(document).ready(function() {
@@ -547,4 +590,13 @@ div.box {
       });
     </script>
     <!-- /Datatables -->
+    <script>
+    $(document).ready(function(){
+      $('.dropdown-submenu a.test').on("click", function(e){
+        $(this).next('ul').toggle();
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    });
+    </script>
 @endsection

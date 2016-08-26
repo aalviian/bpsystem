@@ -120,29 +120,12 @@
                                 Survey <span class="caret"></span> 
                             </a>
                             <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                              @foreach ($survey as $f_survey)
                               <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 1</a>
+                                <a tabindex="-1" href="{{ url($f_survey -> id_survey.'/administrasi') }}">{{ $f_survey -> nama_survey }} ( {{$f_survey -> id_survey}} )</a>
                               </li>
                               <li class="divider"></li>
-                              <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 2</a>
-                              </li>
-                              <li class="divider"></li>
-                              <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 3</a>
-                              </li>
-                              <li class="divider"></li>
-                              <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 4</a>
-                              </li>
-                              <li class="divider"></li>
-                              <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 5</a>
-                              </li>
-                              <li class="divider"></li>
-                              <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Survey 6</a>
-                              </li>
+                              @endforeach
                             </ul>
                         </div>
                     </div>
@@ -197,6 +180,7 @@
                 </div>       
             </div>
 
+            @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
             <!-- Modal -->
             <div class="modal fade" id="TambahHakAkses" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -248,6 +232,8 @@
                     </form>
                 </div>
             </div> 
+            @endif
+            
         </div>
             
             

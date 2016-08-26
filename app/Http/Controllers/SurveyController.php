@@ -9,6 +9,7 @@ use Session;
 use Schema;
 use Excel;
 use Alert;
+use DateTimeZone;
 use Illuminate\Database\Schema\Blueprint;
 
 use App\Http\Requests;
@@ -34,8 +35,8 @@ class SurveyController extends Controller
     public function create(){
         $now = new DateTime();
         $date = date('Y');
-        $dateTime = date('d/m/Y');
-        $identitas_survey = Request::get('surveyidentity');
+        $dateTime = date('Y-m-d');
+        $id_survey = Request::get('surveyidentity');
         $survey_mulai = Request::get('tgl_mulai');
         $survey_selesai = Request::get('tgl_selesai');
         $user_login = Session::get('username');
@@ -48,16 +49,16 @@ class SurveyController extends Controller
         $data_tahapan = Request::get('data_tahapan');
         $type_tahapan = Request::get('type_tahapan');
         
-        DB::beginTransaction();
+        //DB::beginTransaction();
 
-        try{
+        //try{
             //Monitoring/survey
             if($survey_mulai>=$survey_selesai or $survey_mulai<$dateTime or $survey_selesai<=$dateTime){
                 Alert::error("Tanggal survey yang anda masukkan salah")->persistent("Oke");
                 return redirect('createsurvey');
             } else {
                 DB::table('survey')->insert([
-                    'id_survey' => $identitas_survey,
+                    'id_survey' => $id_survey,
                     'nama_survey' => Request::get('surveyname'),
                     'tgl_mulai' => $survey_mulai,
                     'tgl_selesai' => $survey_selesai,
@@ -69,15 +70,15 @@ class SurveyController extends Controller
                     'user_update' => $user_login
                 ]);
             }
-        }   catch (\Exception $e) {
-            DB::table('survey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
+        /*}   catch (\Exception $e) {
+            DB::table('survey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
             Alert::error("Terdapat data survey yang terisi secara tidak benar.")->persistent("Oke");
             return redirect('createsurvey');
-        }
+        }*/
 
-        $survey = DB::table('survey')->where('id_survey', $identitas_survey)->first();
+        $survey = DB::table('survey')->where('id_survey', $id_survey)->first();
 
-        try{
+        //try{
             //Cakupan Wilayah
             $count=Request::get('count');
             $index=count($count);
@@ -87,14 +88,16 @@ class SurveyController extends Controller
                     'id_wilayah'=>$j,
                     'id_survey'=>$survey->id_survey,
                     'nama_wilayah'=>$nama_wilayah[$j-1],
-                    'data_wilayah'=>$identitas_survey.'-'.$nama_wilayah[$j-1],
+                    'data_wilayah'=>$id_survey.'-'.$nama_wilayah[$j-1],
                     'tgl_create'=>$now,
-                    'tgl_update'=>$now
+                    'tgl_update'=>$now,
+                    'user_create' => $user_login,
+                    'user_update' => $user_login
                 ]);
 
                 $exdata = Excel::selectSheetsByIndex(0)->load($dat, function($reader) {})->get();
 
-                Schema::create($identitas_survey.'-'.$nama_wilayah[$j-1], function(Blueprint $table)use($j,$nama_wilayah,$length_wilayah){
+                Schema::create($id_survey.'-'.$nama_wilayah[$j-1], function(Blueprint $table)use($j,$nama_wilayah,$length_wilayah){
                     for($k=$j-1;$k>=0;$k--){
                         if($k==$j-1){
                             $table->string('id_'.$nama_wilayah[$k],$length_wilayah[$k])->primary();
@@ -106,14 +109,14 @@ class SurveyController extends Controller
                         
                 });
                 foreach ($exdata->toArray() as $row) {
-                    DB::table($identitas_survey.'-'.$nama_wilayah[$j-1])->insert([$row]);
+                    DB::table($id_survey.'-'.$nama_wilayah[$j-1])->insert([$row]);
                 }
             }
 
             //Hak Akses
             $admin = Request::get('admin');
 
-            Schema::create($identitas_survey.'-hakakses', function(Blueprint $table){
+            Schema::create($id_survey.'-hakakses', function(Blueprint $table){
 
                 $table->string('id_user');
                 $row_hakakses[] = 'id_user';
@@ -126,7 +129,7 @@ class SurveyController extends Controller
                 $table->string('user_update');
             });
 
-            Schema::create($identitas_survey.'-hakakses-wilayah', function(Blueprint $table)use($nama_wilayah,$length_wilayah){
+            Schema::create($id_survey.'-hakakses-wilayah', function(Blueprint $table)use($nama_wilayah,$length_wilayah){
                 foreach(array_combine($nama_wilayah, $length_wilayah) as $wil=>$length){
                     $table->string('id_'.$wil,$length);
                     $row_hakakses[] = 'id_'.$wil;
@@ -140,23 +143,23 @@ class SurveyController extends Controller
                 $table->string('user_update');
             });
 
-        }catch (\Exception $e) {
-            DB::table('survey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-            DB::table('wilayah')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-            $this->deleteTableWilayah($index,$identitas_survey,$nama_wilayah);
+        /*}catch (\Exception $e) {
+            DB::table('survey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+            DB::table('wilayah')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+            $this->deleteTableWilayah($index,$id_survey,$nama_wilayah);
             Alert::error("Terdapat data tahapan yang terisi secara tidak benar.")->persistent("Oke");
             return redirect('createsurvey');
         }
 
-        try{
+        try{*/
             //Tahapan Survey
             for($i=0;$i<$size;$i++){
                 if($tahapan_mulai[$i]>=$tahapan_selesai[$i] or $tahapan_mulai[$i]<$survey_mulai or $tahapan_mulai[$i]>$survey_selesai or $tahapan_selesai[$i]<$survey_mulai or $tahapan_selesai[$i]>$survey_selesai){
 
-                    DB::table('survey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-                    DB::table('wilayah')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-                    DB::table('tahapansurvey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-                    $this->deleteTableWilayah($index,$identitas_survey,$nama_wilayah);
+                    DB::table('survey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+                    DB::table('wilayah')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+                    DB::table('tahapansurvey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+                    $this->deleteTableWilayah($index,$id_survey,$nama_wilayah);
                     Alert::error("Tanggal tahapan yang anda masukkan salah")->persistent("Oke");
                     return redirect('createsurvey');
 
@@ -174,19 +177,19 @@ class SurveyController extends Controller
 
                     ]);
 
-                    $this->createTableTahapan($identitas_survey,$nama_tahapan,$nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i);
+                    $this->createTableTahapan($id_survey,$nama_tahapan,$nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i);
                 }
             }
-        }catch (\Exception $e) {
-            DB::table('survey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-            DB::table('wilayah')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-            DB::table('tahapansurvey')->where('id_survey', $identitas_survey)->where('tgl_create', $now)->delete();
-            $this->deleteTableTahapan($index,$nama_tahapan,$identitas_survey,$nama_wilayah);
+        /*}catch (\Exception $e) {
+            DB::table('survey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+            DB::table('wilayah')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+            DB::table('tahapansurvey')->where('id_survey', $id_survey)->where('tgl_create', $now)->delete();
+            $this->deleteTableTahapan($index,$nama_tahapan,$id_survey,$nama_wilayah);
             Alert::error("Terdapat data tahapan yang terisi secara tidak benar.")->persistent("Oke");
             return redirect('createsurvey');
         }
 
-        DB::commit();
+        DB::commit();*/
         Alert::success("Survey telah berhasil dibuat, silakan atur hak akses terlebih dahulu")->persistent("Oke");
         return redirect($survey->id_survey.'/administrasi');
 
@@ -226,8 +229,9 @@ class SurveyController extends Controller
     }
 
 
-    protected function createTableTahapan($identitas_survey,$nama_tahapan,$nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){
-        Schema::create($identitas_survey.'-'.$nama_tahapan[$i], function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){    
+
+    protected function createTableTahapan($id_survey,$nama_tahapan,$nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){
+        Schema::create($id_survey.'-'.$nama_tahapan[$i], function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){    
             foreach(array_combine($nama_wilayah, $length_wilayah) as $wil=>$length){
                 $table->string('id_'.$wil,$length);
                 $primary[] = 'id_'.$wil;
@@ -242,6 +246,7 @@ class SurveyController extends Controller
                     $table->float($data_tahapan[$i+1][$j]);
                 }
             }
+            $table->integer('target');
             $table->primary($primary);
             $table->dateTime('tgl_create');
             $table->dateTime('tgl_update');
@@ -249,7 +254,7 @@ class SurveyController extends Controller
             $table->string('user_update');
         });
                     
-        Schema::create($identitas_survey.'-'.$nama_tahapan[$i].'-hist', function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){      
+        Schema::create($id_survey.'-'.$nama_tahapan[$i].'-hist', function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){      
             foreach(array_combine($nama_wilayah, $length_wilayah) as $wil=>$length){
                 $table->string('id_'.$wil,$length);
                 $primary[] = 'id_'.$wil;
@@ -264,6 +269,7 @@ class SurveyController extends Controller
                     $table->float($data_tahapan[$i+1][$j]);
                 }
             }
+            $table->integer('target');
             $table->dateTime('tgl_create');
             $primary[] = 'tgl_create';
             $table->primary($primary);
@@ -272,7 +278,7 @@ class SurveyController extends Controller
             $table->string('user_update');
         });
 
-        Schema::create($identitas_survey.'-'.$nama_tahapan[$i].'-histgl', function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){      
+        Schema::create($id_survey.'-'.$nama_tahapan[$i].'-histgl', function(Blueprint $table)use($nama_wilayah,$length_wilayah,$data_tahapan,$type_tahapan,$i){      
             foreach(array_combine($nama_wilayah, $length_wilayah) as $wil=>$length){
                 $table->string('id_'.$wil,$length);
                 $primary[] = 'id_'.$wil;
@@ -287,6 +293,7 @@ class SurveyController extends Controller
                     $table->float($data_tahapan[$i+1][$j]);
                 }
             }
+            $table->integer('target');
             $table->date('tgl_create');
             $primary[] = 'tgl_create';
             $table->primary($primary);
@@ -294,21 +301,103 @@ class SurveyController extends Controller
             $table->string('user_create');
             $table->string('user_update');
         });
+
+        //import target
+        $user_login = session::get('username'); 
+        $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+        $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
+    
+        $size = count($nama_tahapan);
+        
+        for($i=1;$i<=$size;$i++){
+            $dat = Request::file('target'.$i);
+            $exdata = Excel::selectSheetsByIndex(0)->load($dat, function($reader) {})->get();
+
+            foreach ($exdata->toArray() as $f_exdata) {
+                $row1_create=$f_exdata;
+                $row2_create=$f_exdata;
+                $row3_create=$f_exdata;
+                $row1_edit=$f_exdata;
+                $row3_edit=$f_exdata;
+
+                for($j=0;$j<count($wilayah);$j++){
+                    $a='id_'.$wilayah[$j]->nama_wilayah;
+                    $in_wilayah[$a]=$f_exdata[$a];
+                }
+
+                $size_tambah_tahapan=count($data_tahapan[$i]);
+                for($j=0;$j<$size_tambah_tahapan;$j++){
+                    $row1_create[$data_tahapan[$i][$j]]=0;
+                    $row2_create[$data_tahapan[$i][$j]]=0;
+                    $row3_create[$data_tahapan[$i][$j]]=0;
+                    $row1_edit[$data_tahapan[$i][$j]]=0;
+                    $row3_edit[$data_tahapan[$i][$j]]=0;     
+                }
+
+                $row1_create['tgl_create'] = $now;
+                $row1_create['tgl_update'] = $now;
+                $row1_create['user_create'] = $user_login;
+                $row1_create['user_update'] = $user_login;
+                $row2_create['tgl_create'] = $now;
+                $row2_create['tgl_update'] = $now;
+                $row2_create['user_create'] = $user_login;
+                $row2_create['user_update'] = $user_login;
+                $row3_create['tgl_create'] = date('Y-m-d');
+                $row3_create['tgl_update'] = $now;
+                $row3_create['user_create'] = $user_login;
+                $row3_create['user_update'] = $user_login;
+
+                $survey_tahapan = DB::table($id_survey.'-'.$nama_tahapan[$i-1]) -> where($in_wilayah) -> first();     
+
+                //tahapan
+                if($survey_tahapan) {
+                    DB::table($id_survey.'-'.$nama_tahapan[$i-1])->where($in_wilayah)->update($row1_edit);
+                } else {
+                    DB::table($id_survey.'-'.$nama_tahapan[$i-1])->insert($row1_create);
+                }
+
+                //tahapan-hist
+                $cek_hist=$in_wilayah;
+                $cek_hist['tgl_create']=$now;
+                $cek_tahapan = DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-hist') -> where($cek_hist) -> first();
+                    
+                if($cek_tahapan){
+                    DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-hist')->where($cek_hist)->update($row2_create);    
+                } else { 
+                    DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-hist')->insert($row2_create);
+                }
+
+                //untukhisttgl
+                $now_date = date('Y-m-d');
+                $survey_tahapan_histgl = DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-histgl')->where($in_wilayah)->orderBy('tgl_create', 'DESC')->first();
+
+                if($survey_tahapan_histgl){
+                    if($now_date > $survey_tahapan_histgl->tgl_create) {
+                        DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-histgl')->insert($row3_create);
+                    } else {
+                        DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-histgl')->where($in_wilayah)->update($row3_edit);
+                    }
+                } else {
+                    DB::table($id_survey.'-'.$nama_tahapan[$i-1].'-histgl')->insert($row3_create);
+                }
+
+            }
+        }
     }
 
-    protected function deleteTableTahapan($nama_tahapan,$identitas_survey,$nama_wilayah){
+    protected function deleteTableTahapan($nama_tahapan,$id_survey,$nama_wilayah){
         foreach ($nama_tahapan as $f_nama_tahapan) {
-            Schema::drop($identitas_survey.'-'.$f_nama_tahapan);
-            Schema::drop($identitas_survey.'-'.$f_nama_tahapan.'-hist');
-            Schema::drop($identitas_survey.'-'.$f_nama_tahapan.'-histgl');
-            $this->deleteTableWilayah($index,$identitas_survey,$nama_wilayah);
+            Schema::drop($id_survey.'-'.$f_nama_tahapan);
+            Schema::drop($id_survey.'-'.$f_nama_tahapan.'-hist');
+            Schema::drop($id_survey.'-'.$f_nama_tahapan.'-histgl');
+            $this->deleteTableWilayah($index,$id_survey,$nama_wilayah);
         }
     }
 
-    protected function deleteTableWilayah($index,$identitas_survey,$nama_wilayah){
-        for($j=1;$j<=$index;$j++){
-            Schema::drop($identitas_survey.'-'.$nama_wilayah[$j-1]);
+    protected function deleteTableWilayah($index,$id_survey,$nama_wilayah){
+       for($j=1;$j<=$index;$j++){
+            Schema::drop($id_survey.'-'.$nama_wilayah[$j-1]);
         }
-        Schema::drop($identitas_survey.'-hakakses-wilayah');
+        Schema::drop($id_survey.'-hakakses-wilayah');
     }
 }

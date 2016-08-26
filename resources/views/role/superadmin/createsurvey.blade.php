@@ -116,14 +116,14 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Mulai </label>
                                                 <div class="col-md-2 col-sm-6 col-xs-12">
-                                                  <input id="tgl_mulai" name="tgl_mulai" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
+                                                  <input id="tgl_mulai" name="tgl_mulai" class="date-picker form-control col-md-7 col-xs-12" data-date-format="YYYY-MM-DD" required="required" type="text">
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Selesai </label>
                                                 <div class="col-md-2 col-sm-6 col-xs-12">
-                                                  <input id="tgl_selesai" name="tgl_selesai" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
+                                                  <input id="tgl_selesai" name="tgl_selesai" class="date-picker form-control col-md-7 col-xs-12" data-date-format="YYYY-MM-DD" required="required" type="text">
                                                 </div>
                                             </div>
                                         </div>
@@ -141,6 +141,7 @@
                                                         <th>Nama Tahapan</th>
                                                         <th>Mulai</th>
                                                         <th>Selesai</th>
+                                                        <th>Target</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id=con_tahapan>
@@ -218,12 +219,13 @@
                               </div>
                               <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Mulai </label>
-                                <input id="m_tahapan_mulai" name="m_tahapan_mulai" class="date-picker form-control" required="required" type="text">
+                                <input id="m_tahapan_mulai" name="m_tahapan_mulai" data-date-format="YYYY-MM-DD" class="date-picker form-control" required="required" type="text">
                               </div>
                               <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Selesai </label>
-                                <input id="m_tahapan_selesai" name="m_tahapan_selesai" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
+                                <input id="m_tahapan_selesai" name="m_tahapan_selesai" data-date-format="YYYY-MM-DD" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
                               </div>
+                              
                               <br><br>
                               <div class="form-group">
                                 <input class="pull-right" type="button" name="remove_item" value="remove" id="remove_item">
@@ -271,8 +273,7 @@
             </div>
             
         </section>             
-                                              
-@endsection
+    @endsection
 
 @section('js')
 

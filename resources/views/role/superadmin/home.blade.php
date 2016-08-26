@@ -126,7 +126,9 @@
                             </h2>
                         </div>
                         <div class="card-body card-padding">
-                            <p>Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk Sistem monitoring bertujuan untuk</p>
+                            <p>Sistem monitoring bertujuan memudahkan pemantau baik di pusat maupun di daerah untuk melihat keseluruhan hasil monitoring. Kegiatan yang harus dilaporkan adalah Monitoring Pelaksanaan Pendataan. Monitoring Kualitas dan Monitoring Pengolahan Data. Informasi hasil monitoring dapat dilihat dari seluruh perangkat elektronik.</p>
+                            <br>
+                            <p>Website (situs) ini bersifat realtime karena setiap pengiriman laporan yang dilakukan oleh petugas akan secara otomatis di update, sehingga seluruh tabulasi dan grafik juga akan mengalami perubahan. Situs ini hanya bisa diakses oleh pengguna @bps.go.id yang telah terdaftar dan tidak dipublikasikan untuk umum. </p>
 <!--
                             <a href="" class="view-more"><i class="zmdi zmdi-long-arrow-right"></i> View Article...</a>
 -->

@@ -34,7 +34,7 @@
     <body data-ma-header="teal">
         <header id="header" class="media">
             <div class="pull-left h-logo">
-                <a href="index.html" class="hidden-xs">
+                <a href="{{ url('/') }}" class="hidden-xs">
                     Monitor Survey
                     <small>Hi, {{ $user->name }}</small>
                 </a>
