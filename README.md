@@ -1,3 +1,15 @@
+# BPSYSTEM - BPS IPB
+"Dynamic Layer System of Monitoring Survey BPS"
+
+- Bogor Agricultural University
+- Badan Pusat Statistik
+
+# Our Teams
+1. Andy Eka Saputra
+2. Muhammad Alvian Supriadi
+3. Muhammad Kamal Hidayatullah
+4. Hengky Rachmadhani
+
 # Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
