@@ -40,5 +40,5 @@ Route::get('{id_survey}/{id_tahapan}', 'TahapanController@viewTahapan');
 //input data
 Route::get('{id_survey}/{id_tahapan}/input', 'InputController@index');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah', 'InputController@tambah');
-Route::post('{id_survey}/{id_Tahapan}/input/tambahdgnfile', 'InputController@tambahdgnfile');
+Route::post('{id_survey}/{id_Tahapan}/input/tambah/file', 'InputController@tambahdgnfile');
 

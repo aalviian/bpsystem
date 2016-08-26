@@ -304,9 +304,9 @@ div.box {
                                 @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
                                     <?php
-                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                        $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
                                     ?>
-                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
@@ -358,7 +358,7 @@ div.box {
                     3. Determine an admin of survey Extend form controls by adding text or buttons before, after, or on both sides of any text-based inputs.</small></h2>
                     <br>
                      <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+                        <button class="btn palette-Teal bg dropdown-toggle" type="button" data-toggle="dropdown">Survey
                         <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                         @foreach ($survey as $f_survey)
@@ -391,17 +391,16 @@ div.box {
                             <p>Input data dengan form</p>
                             @foreach ($daftarWilayah as $f_daftarWilayah)
                                 <p class="f-500 m-b-15 c-black">{{$f_daftarWilayah->nama_wilayah}} :</p>
-                                <select id="{{$f_daftarWilayah->nama_wilayah}}" name="{{$f_daftarWilayah->nama_wilayah}}" >
+                                <select class="selectpicker" data-live-search="true" name="wilayah{{$count_wil}}" required>
                                     <?php
                                     $dataWilayah = DB::table($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah)->get();
                                     $nameWilayah = Schema::getColumnListing($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah);
                                     $count = count($nameWilayah);
                                     ?>
-                                     <option value="">--</option>
-                                                  @foreach($dataWilayah as $f_dataWilayah)
-                                    <option value="{{$f_dataWilayah->$nameWilayah[0]}}" @if($count == 3) class="{{$f_dataWilayah->$nameWilayah[1]}}" @endif>({{$f_dataWilayah->$nameWilayah[0]}}} {{ $f_dataWilayah->$nameWilayah[$count-1] }}</option>
+                                                    
+                                    @foreach($dataWilayah as $f_dataWilayah)
+                                    <option value="{{$f_dataWilayah->$nameWilayah[0]}}">{{ $f_dataWilayah->$nameWilayah[$count-1] }} {{$f_dataWilayah->$nameWilayah[0]}}</option>
                                     @endforeach
-
                                 </select>
                                 <input type="hidden" name="count_wil[]" value="{{$count_wil++}}">
                                 <br>

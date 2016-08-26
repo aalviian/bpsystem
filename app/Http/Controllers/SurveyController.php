@@ -321,7 +321,7 @@ class SurveyController extends Controller
                 $row3_edit=$f_exdata;
 
                 for($j=0;$j<count($wilayah);$j++){
-                    $a='id_'.$wilayah[$j]->nama_wilayah;
+                    $a=strtolower('id_'.$wilayah[$j]->nama_wilayah);
                     $in_wilayah[$a]=$f_exdata[$a];
                 }
 

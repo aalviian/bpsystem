@@ -76,9 +76,9 @@
                                 @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
                                     <?php
-                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                        $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
                                     ?>
-                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>

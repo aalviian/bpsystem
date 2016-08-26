@@ -61,9 +61,9 @@
                                 @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
                                     <?php
-                                        $survei2 = DB::table('survey') -> where('id_survey', $f_tahapan->id_survey) -> first();
+                                        $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
                                     ?>
-                                    <a href="{{ url($survei->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                    <a href="{{ url($id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
@@ -135,7 +135,9 @@
                 <div class="card">
                     <div class="card-header cw-header palette-Blue-400 bg">
                         <h2><font color="white">Tabel Daftar Pengguna {{$id_survey}}</font></h2>
+                        @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                         <a  data-toggle="modal" href="#TambahHakAkses" class="btn palette-Red bg btn-float waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></a>
+                        @endif
                     </div>
                     <br>
                     <br>
@@ -147,7 +149,9 @@
                                     <th data-column-id="received" data-order="desc">NIP</th>
                                     <th data-column-id="sender">Name</th>
                                     <th data-column-id="sender">Hak Akses</th>
+                                    @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <th>Action</th>
+                                    @endif
                                     
                                 </tr>
                             </thead>
@@ -167,11 +171,13 @@
                                     <td>{{ $user -> nip_user }}</td>
                                     <td>{{ $user -> name }}</td>
                                     <td>{{ $hakakses -> hakakses }}</td>
+                                    @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <td>
                                         <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn  palette-Indigo bg">Edit</a>
                                         
                                         <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn  palette-Red bg">Delete</a>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -233,7 +239,7 @@
                 </div>
             </div> 
             @endif
-            
+
         </div>
             
             

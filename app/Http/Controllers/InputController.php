@@ -62,7 +62,7 @@ class InputController extends Controller
                         $count_wil = Request::get('count_wil');
                         $count_input = Request::get('count_input');
                         $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
-                        $tahapan = DB::table('tahapansurvey') -> where('id_tahapan', $id_tahapan) -> first();
+                        $tahapan = DB::table('tahapansurvey') -> where('id_tahapan', $id_tahapan) -> where('id_survey', $id_survey) -> first();
                         $header_wilayah = Schema::getColumnListing($id_survey.'-'.$tahapan->nama_tahapan);
                         for($i=0;$i<count($header_wilayah);$i++){
                             if($i<count($count_wil)){
@@ -111,7 +111,7 @@ class InputController extends Controller
                         
                         $cek_wilayah = DB::table($id_survey.'-'.$wilayah[count($wilayah)-1]->nama_wilayah)->where($in_wilayah)->first();
 
-                        if($cek_wilayah){            
+                        //if($cek_wilayah){            
                             $survey_tahapan = DB::table($id_survey.'-'.$tahapan->nama_tahapan) -> where($in_wilayah) -> first();
 
                             $row1_create['target'] = $survey_tahapan->target;
@@ -142,10 +142,10 @@ class InputController extends Controller
                                 DB::table($id_survey.'-'.$tahapan->nama_tahapan.'-histgl')->insert($row3_create);
                             }
 
-                        } else {
+                        /*} else {
                             Alert::warning('wilayah tidak cocok..')->persistent('Oke');
                             return redirect($id_survey.'/'.$id_tahapan.'/input');
-                        }
+                        }*/
 
                         Alert::success('Data telah berhasil ditambahkan')->persistent('Oke');
                         return redirect($id_survey.'/'.$id_tahapan.'/input');
@@ -205,7 +205,7 @@ class InputController extends Controller
                     }
 
                     for($i=count($count_wil)-1;$i>=0;$i--){
-                        $in_wilayah['id_'.$head[$i]] = Request::get('wilayah'.$count_wil[$i]);
+                        $in_wilayah['id_'.strtolower($head[$i])] = Request::get('wilayah'.$count_wil[$i]);
                     }
                     
                     $cek_wilayah = DB::table($id_survey.'-'.$wilayah[count($wilayah)-1]->nama_wilayah)->where($in_wilayah)->first();
