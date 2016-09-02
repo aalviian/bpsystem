@@ -15,8 +15,8 @@ class HomeController extends Controller
     public function index(){
         if(session::has('username')){
             $user=DB::table('users') -> where('username', session::get('username')) -> first();
-            $survey=DB::table('survey')->get();
-            
+            $survey=DB::table('survey')->get(); 
+             
             return view('role.superadmin.home', compact('user','survey'));
             
         } else {

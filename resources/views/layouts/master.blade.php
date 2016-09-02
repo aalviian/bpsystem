@@ -20,13 +20,12 @@
         <link href="{{ asset('assets/vendors/bower_components/chosen/chosen.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/summernote/dist/summernote.css') }}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/sweetalert-master/dist/sweetalert.css')}}">
-
         @yield('css')
 
         <!-- CSS -->
         <link href="{{ asset('assets/css/app.min.1.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/css/app.min.2.css') }}" rel="stylesheet"> 
-
+        <link href="{{ asset('assets/css/app.min.2.css') }}" rel="stylesheet">
+        
     </head> 
     @if(session::get('username'))
     <input type="hidden" id="name" value="{{ $user->name }}">
@@ -60,43 +59,24 @@
                         <i class="hm-icon zmdi zmdi-apps"></i>
                     </a>
                     <ul class="dropdown-menu pull-right">
+                        <?php
+                            $survey = DB::table('survey') -> get();
+                            $i=0;
+                        ?>
+                        @foreach($survey as $f_survey)
                         <li>
                             <a href="">
-                                <i class="palette-Red-400 bg zmdi zmdi-calendar"></i>
-                                <small>Calendar</small>
+                                <?php
+                                    $a=array("Red","Green","Blue","yellow","brown");
+                                    $color=$a[$i];
+                                    $i++; 
+                                    $palette = "palette-".$color."-400 bg zmdi zmdi-folder-outline";
+                                    ?>
+                                        <i class="{{ $palette }}"></i>
+                                        <small>{{ $f_survey -> id_survey}}</small>
                             </a>
                         </li>
-                        
-                        <li>
-                            <a href="">
-                                <i class="palette-Green-400 bg zmdi zmdi-file-text"></i>
-                                <small>Files</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="">
-                                <i class="palette-Light-Blue bg zmdi zmdi-email"></i>
-                                <small>Mail</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="">
-                                <i class="palette-Orange-400 bg zmdi zmdi-trending-up"></i>
-                                <small>Analytics</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="">
-                                <i class="palette-Purple-300 bg zmdi zmdi-view-headline"></i>
-                                <small>News</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="">
-                                <i class="palette-Blue-Grey bg zmdi zmdi-image"></i>
-                                <small>Gallery</small>
-                            </a>
-                        </li>
+                        @endforeach
                     </ul>
                 </li>
                 <li class="dropdown hidden-xs">

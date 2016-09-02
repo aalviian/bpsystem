@@ -4,7 +4,6 @@
     @endsection
 
     @section('css')
-        <link href="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
@@ -41,22 +40,20 @@
                                 <a href="{{ url('createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $f_survey)
-                                <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
+                    @if($user -> level_user == "1")
+                    <li>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
+                    </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
-                                <ul>
-                                    <li><a href="alternative-header.html">Pemutakhiran</a></li>
-                                    <li><a href="colored-header.html">Pencacahan</a></li>
-                                </ul>
-                            </li>
-                            <li class="sub-menu">
-                                <a href="" data-ma-action="submenu-toggle">SUSENAS</a>
                                 <ul>
                                     <li><a href="alternative-header.html">Pemutakhiran</a></li>
                                     <li><a href="colored-header.html">Pencacahan</a></li>
@@ -208,17 +205,11 @@
         <script src="{{ asset('assets/vendors/bower_components/Waves/dist/waves.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
 
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/flot.curvedlines/curvedLines.js') }}"></script>
-        <script src="{{ asset('assets/vendors/sparklines/jquery.sparkline.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
-        <script src="{{ asset('assets/js/flot-charts/line-chart.js') }}"></script>
         <script>
             $(window).load(function(){
                 //Welcome Message (not for login page)

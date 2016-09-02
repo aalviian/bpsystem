@@ -208,7 +208,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'Alert' => UxWeb\SweetAlert\SweetAlert::class,
-
+        'Input'     => Illuminate\Support\Facades\Input::class,
     ],
 
 ];

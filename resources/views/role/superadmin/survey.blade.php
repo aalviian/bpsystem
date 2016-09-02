@@ -146,8 +146,10 @@
                         <div class="card-header">
                             <h2>Indonesia</h2>
                             <br>
-                            <?php $date=date('d m Y'); ?>
-                            <h2>Kondisi sampai tanggal : {{$date}}</h2>
+                            <?php 
+                            $ambiltahapan = DB::table('survey') -> where('id_survey', $id_survey) -> first();
+                            ?>
+                            <h2>Kondisi sampai tanggal : {{ $ambiltahapan->tgl_selesai }} </h2>
                         </div>
                         
                         <div class="card-body card-padding">

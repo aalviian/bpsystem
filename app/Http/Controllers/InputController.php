@@ -55,7 +55,7 @@ class InputController extends Controller
         $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
         if($users) {
             $level=$users->hakakses;
-                if($level=="Operator") {
+                if($level=="Operator" || $level="Admin") {
                     
                     $user=DB::table('users') -> where('username', Session::get('username')) -> first();
                         $user_login = session::get('username'); 

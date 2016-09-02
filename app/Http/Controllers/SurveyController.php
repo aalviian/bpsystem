@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Request;
-use DB;
+use DB; 
 use DateTime;
 use Session;
 use Schema;
@@ -204,19 +204,18 @@ class SurveyController extends Controller
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
 
-            return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','$survey2','tahapanSurvey2','survey2'));
+            return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','tahapanSurvey2','survey2'));
         }
         $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
         if($users) {   
             $user=DB::table('users') -> where('username', Session::get('username')) -> first();
             $level=$users->hakakses;
-
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
 
             if($level) {
-                return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','$survey2','tahapanSurvey2','survey2'));
+                return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','tahapanSurvey2','survey2'));
             }
             else {
                 return back();

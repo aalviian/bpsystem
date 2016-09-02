@@ -18,7 +18,7 @@
         <link href="{{ asset('assets/vendors/summernote/dist/summernote.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
- 
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/sweetalert-master/dist/sweetalert.css')}}">
     @endsection
 
     @section('leftNavbar')
@@ -63,7 +63,7 @@
                                     <?php
                                         $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
                                     ?>
-                                    <a href="{{ url($id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
@@ -97,8 +97,6 @@
         </aside>
     @endsection
 
-
-
     @section('content')
         <section id="content">
             <div class="container">
@@ -107,7 +105,7 @@
                     <li><a href="{{ url($id_survey) }}">{{ $id_survey }}</a></li>
                     <li>Administrasi</li>
                 </ol>
-                
+
                 <div class="card">
                     <div class="card-header">
                         <h2>Remember :<small>
@@ -142,6 +140,20 @@
                     <br>
                     <br>
                     <div class="card-body card-padding">
+                                        <div class="form-group">
+                                            <div class="col-md-2"></div>
+                                            <label class="control-label col-md-2">Username:</label>
+                                            <div class="col-md-4">                                                
+                                                <input id="quick-search" class="form-control"/>
+                                            </div>
+                                            <div class="col-md-4"></div>
+                                        </div>   
+                       @foreach($username as $f_username)
+                            <input type="hidden" value="{{ $f_username -> username }}">
+                       @endforeach
+                       <?php
+                        $countusernam= count($username);
+                       ?>
                         <table id="data-table" class="table table-striped table-vmiddle">
                             <thead>
                                 <tr>
@@ -173,9 +185,9 @@
                                     <td>{{ $hakakses -> hakakses }}</td>
                                     @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <td>
-                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn  palette-Indigo bg">Edit</a>
+                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a>
                                         
-                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn  palette-Red bg">Delete</a>
+                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn palette-Red bg">Delete</a>
                                     </td>
                                     @endif
                                 </tr>
@@ -211,12 +223,20 @@
                                 @endforeach
                             </select>
                         </div>
-                                    
+                        <?php
+                        $hakakses = DB::table($id_survey.'-hakakses') -> get();
+                        echo count($hakakses);
+
+                        $users = DB::table('users') -> whereNotIn('username', ['alvian', 'kamal', 'aneksa']) ->get();   
+                        ?>
                         <div class="form-group">
                             <label class="control-label" for="nip">NIP</label>
-                            <input type="text" id="nip" name="nip" required="required" class="form-control">
-                        </div>
-                                    
+                            <select class="selectpicker" multiple data-live-search="true" name="username">
+                              @foreach ($users as $f_username)
+                                <option value="{{$f_username->username}}">{{$f_username->username}}</option> 
+                               @endforeach 
+                            </select>
+                        </div>              
                         <div class="form-group">
                             <label class="control-label" for="hakakses">Hak Akses</label>
                             
@@ -241,14 +261,7 @@
             @endif
 
         </div>
-            
-            
-            
-            
-        </section>
-
-
-
+  </section>
 @endsection
 
 @section('js')
@@ -269,6 +282,37 @@
         <script src="{{ asset('assets/vendors/farbtastic/farbtastic.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/fileinput/fileinput.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.updated.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('assets/jqueryui/jquery-ui.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('assets/jqueryui/icheck.min.js') }}"></script>
+
+        <script>
+        $(function() {
+   
+            var data_1 = [
+                "aneksa",
+                "alvian",
+                "dyetra",
+                "eka",
+                "hengky",
+                "kamal",
+                "supriadi"
+            ];
+    
+            $("#quick-search").autocomplete({
+                source: data_1,
+                open: function(event, ui) {
+                    
+                    var autocomplete = $(".ui-autocomplete:visible");
+                    var oldTop = autocomplete.offset().top;
+                    var newTop = oldTop - $("#quick-search").height() + 25;
+                    autocomplete.css("top", newTop);
+                    
+                }
+            });
+            
+        });            
+        </script>
+        
 
         <!-- Data Table -->
         <script type="text/javascript">

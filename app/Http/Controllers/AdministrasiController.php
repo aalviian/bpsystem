@@ -27,7 +27,8 @@ class AdministrasiController extends Controller
         	$daftarHakAkses = DB::table($id_survey.'-hakakses')->get();
             $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
             $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->where('nama_wilayah', $daftarWilayah[count($daftarWilayah)-1]->nama_wilayah)->first();
-            return view('role.superadmin.administrasi', compact('user', 'id_survey', 'survey','survey2','tahapanSurvey2', 'daftarHakAkses','wilayah','level'));
+            $username = DB::table('users')->get();
+            return view('role.superadmin.administrasi', compact('user', 'id_survey', 'survey','survey2','tahapanSurvey2', 'daftarHakAkses','wilayah','level','username'));
         }
         $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
         if($users) {
@@ -63,9 +64,9 @@ class AdministrasiController extends Controller
                     $user_login = Session::get('username');
                     $counter = Request::get('counter');
                     $id_wilayah = Request::get('wilayah');
-                    $nip = Request::get('nip');
+                    $username = Request::get('username');
                     $hakakses = Request::get('hakakses');
-                    $pegawai = DB::table('users')->where('nip_user', $nip)->first();
+                    $pegawai = DB::table('users')->where('username', $username)->first();
 
                     if($pegawai){            
                         $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
@@ -95,7 +96,7 @@ class AdministrasiController extends Controller
                         Alert::success($pegawai->name.' telah ditambahkan sebagai '.$hakakses)->persistent('oke');
                         return redirect($id_survey.'/administrasi');     
                     } else {
-                        Alert::warning('Pegawai dengan NIP '.$nip.' tidak ditemukan')->persistent('oke');
+                        Alert::warning('Pegawai dengan username '.$username.' tidak ditemukan')->persistent('oke');
                         return redirect($id_survey.'/administrasi');
                     }
                 }
@@ -109,9 +110,9 @@ class AdministrasiController extends Controller
             $user_login = Session::get('username');
             $counter = Request::get('counter');
             $id_wilayah = Request::get('wilayah');
-            $nip = Request::get('nip');
+            $username = Request::get('username');
             $hakakses = Request::get('hakakses');
-            $pegawai = DB::table('users')->where('nip_user', $nip)->first();
+            $pegawai = DB::table('users')->where('username', $username)->first();
 
             if($pegawai){            
                 $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
@@ -141,7 +142,7 @@ class AdministrasiController extends Controller
                 Alert::success($pegawai->name.' telah ditambahkan sebagai '.$hakakses)->persistent('oke');
                 return redirect($id_survey.'/administrasi');     
             } else {
-                Alert::warning('Pegawai dengan NIP '.$nip.' tidak ditemukan')->persistent('oke');
+                Alert::warning('Pegawai dengan username '.$username.' tidak ditemukan')->persistent('oke');
                 return redirect($id_survey.'/administrasi');
             }
         }

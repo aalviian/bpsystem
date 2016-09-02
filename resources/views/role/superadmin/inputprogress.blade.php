@@ -16,6 +16,7 @@
         <link href="{{ asset('assets/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/sweetalert-master/dist/sweetalert.css')}}">
         <style type="text/css">
 /* *********  tables styling  ******************************* */
 
@@ -467,6 +468,7 @@ div.box {
                                       <?php for($i=0;$i<$count;$i++) { ?>
                                           <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
                                       <?php } ?>
+                                          <th>Status</th>
                                       </tr>
                           </thead>
                           <tbody>
@@ -475,7 +477,55 @@ div.box {
                                   <tr>
                                   <?php for($i=0;$i<$count;$i++) { ?> 
                                       <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
-                                  <?php } ?> 
+                                  <?php } ?>
+                                  @if($count==7)
+                                      @if($f_ambildata -> $ambilkolom[1] == $f_ambildata -> $ambilkolom[2]) 
+                                      <td><span class="btn btn-success">Selesai</span></td>
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[1] < $f_ambildata -> $ambilkolom[2]) 
+                                          @if($f_ambildata -> $ambilkolom[1]=="0") 
+                                          <td><span class="btn btn-default">Belum terisi</span></td>
+                                          @endif
+                                          @if($f_ambildata -> $ambilkolom[1]!="0")
+                                          <td><span class="btn palette-Orange bg">Kurang</span></td>
+                                          @endif
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[1] > $f_ambildata -> $ambilkolom[2]) 
+                                      <td><span class="btn btn-danger">Melebihi</span></td>
+                                      @endif
+                                  @endif
+                                  @if($count==8)
+                                      @if($f_ambildata -> $ambilkolom[2] == $f_ambildata -> $ambilkolom[3]) 
+                                      <td><span class="btn btn-success">Selesai</span></td>
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[2] < $f_ambildata -> $ambilkolom[3]) 
+                                          @if($f_ambildata -> $ambilkolom[2]=="0") 
+                                          <td><span class="btn btn-default">Belum terisi</span></td>
+                                          @endif
+                                          @if($f_ambildata -> $ambilkolom[2]!="0")
+                                          <td><span class="btn palette-Orange bg">Kurang</span></td>
+                                          @endif
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[2] > $f_ambildata -> $ambilkolom[3]) 
+                                      <td><span class="btn btn-danger">Melebihi</span></td>
+                                      @endif
+                                  @endif
+                                  @if($count==9)
+                                      @if($f_ambildata -> $ambilkolom[3] == $f_ambildata -> $ambilkolom[4]) 
+                                      <td><span class="btn btn-success">Selesai</span></td>
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[3] < $f_ambildata -> $ambilkolom[4]) 
+                                          @if($f_ambildata -> $ambilkolom[3]=="0") 
+                                          <td><span class="btn btn-default">Belum terisi</span></td>
+                                          @endif
+                                          @if($f_ambildata -> $ambilkolom[3]!="0")
+                                          <td><span class="btn palette-Orange bg">Kurang</span></td>
+                                          @endif
+                                      @endif
+                                      @if($f_ambildata -> $ambilkolom[3] > $f_ambildata -> $ambilkolom[4]) 
+                                      <td><span class="btn btn-danger">Melebihi</span></td>
+                                      @endif                                    
+                                  @endif
                                   </tr>
                               @endforeach    
                           </tbody>  

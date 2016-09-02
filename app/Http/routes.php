@@ -33,7 +33,7 @@ Route::post('{id_survey}/administrasi/{user_hakakses}/edit', 'AdministrasiContro
 //Survey
 Route::get('createsurvey', 'SurveyController@index');
 Route::post('createsurvey', 'SurveyController@create');
-Route::get('{id_survey}', 'SurveyController@survey');
+Route::get('survey/{id_survey}', 'SurveyController@survey');
 
 Route::get('{id_survey}/{id_tahapan}', 'TahapanController@viewTahapan');
 
@@ -42,3 +42,8 @@ Route::get('{id_survey}/{id_tahapan}/input', 'InputController@index');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah', 'InputController@tambah');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah/file', 'InputController@tambahdgnfile');
 
+//user
+Route::get('user', 'UserController@index');
+Route::post('user/create', 'UserController@create');
+Route::post('user/edit/{id_user}', 'UserController@edit');
+Route::post('user/delete', 'UserController@delete'); 
