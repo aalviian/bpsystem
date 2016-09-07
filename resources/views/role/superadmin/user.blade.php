@@ -232,7 +232,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Tambah Hak Akses</h4>
                     </div>
-                    <input type="hiddden" id="id2">
+                    <input type="hidden" id="id2">
                     <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
                     <div class="modal-body">
                         <h3>Apakah anda ingin menghapus <div id="username2"></div> dari database? </h3> 
