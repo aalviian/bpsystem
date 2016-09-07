@@ -139,6 +139,13 @@
                     <div class="card">
                         <div class="card-header">
                             <h2>List User</h2>
+                            <br>
+                            @if(Session::has('success_message'))
+                                <div class="alert alert-success">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <i class="fa fa-info-circle"></i>{{ Session::get('success_message') }}
+                                </div>
+                            @endif
                         </div>
 
                         <div class="card-body card-padding">
@@ -154,7 +161,7 @@
                                             
                                         </tr>
                                     </thead>
-                                    <tbody> 
+                                    <tbody id="tableuser"> 
                                         <?php $no=1; ?>
                                         @foreach($users as $f_users)  
                                         <tr>
@@ -200,21 +207,20 @@
                         </div>              
                         <div class="form-group">
                             <label class="control-label" for="hakakses">Hak Akses</label>
-                            <select class="selectpicker" data-live-search="true" name="level">
+                            <select class="selectpicker" data-live-search="true" id="level" name="level">
                                 <option value="Admin">Admin</option>
                                 <option value="Supervisor">Supervisor</option>
                                 <option value="Operator">Operator</option>
-                            </select>                
-                                       
-                        </div>
-                                
+                            </select>                 
+                        </div>   
                         <br><br>
                     </div>
                          
                     <div class="modal-footer">
-                        <a data-dismiss="modal" class="btn btn-default pull-rigth">Batal</a>
-                        <a id="edit" onclick="edituser()" class="btn btn-success pull-rigth">Tambahkan</a>
+                        <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
+                        <button onclick="edituser()" class="btn btn-success pull-rigth">Tambahkan</button>
                     </div>
+                  </div>
                 </div>
             </div>
 
@@ -226,41 +232,25 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Tambah Hak Akses</h4>
                     </div>
-                    <input type="hidden" id="id">
+                    <input type="hiddden" id="id2">
                     <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label class="control-label" for="">Nama</label>
-                            <input type="text" name="name" id="nama" class="form-control" placeholder="Full Name">
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="nip">Username</label>
-                            <input type="text" name="username" id="username" class="form-control" placeholder="Username">
-                        </div>             
-                        <div class="form-group">
-                            <label class="control-label" for="hakakses">Hak Akses</label>
-                            <select class="selectpicker" data-live-search="true" name="level">
-                                <option value="Admin">Admin</option>
-                                <option value="Supervisor">Supervisor</option>
-                                <option value="Operator">Operator</option>
-                            </select>                
-                                       
-                        </div>
-                                
+                        <h3>Apakah anda ingin menghapus <div id="username2"></div> dari database? </h3> 
+                          
                         <br><br>
                     </div>
                          
                     <div class="modal-footer">
                         <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
-                        <button onclick="deleteuser()" class="btn btn-success pull-rigth">Tambahkan</button>
+                        <button onclick="deleteuser()" class="btn btn-success pull-rigth">Hapus</button>
                     </div>
+                  </div>
                 </div>
             </div>
         
         
 
-                <div id="c-grid" class="clearfix" data-columns></div>
-            </div>
+            <div id="c-grid" class="clearfix" data-columns></div>       
 </section>
 
 @endsection
@@ -276,6 +266,9 @@
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
+        <script src="{{ asset('assets/js/notify/curved-line-chart.js') }}"></script>
+        <script src="{{ asset('assets/js/notify/notify.js') }}"></script>
+        <script src="{{ asset('assets/js/notify/notify.min.js') }}"></script>
         <script>
             $(window).load(function(){
                 //Welcome Message (not for login page)
@@ -319,20 +312,45 @@
         </script>
 
         <script type="text/javascript">
-          function openmodaldelete(id,nama,username){
-              $('#id').val(id);
-              $('#nama').val(nama);
-              $('#username').val(username);
+          function openmodaldelete(id2,nama2,username2){
+              $('#id2').val(id2);
+              $('#nama2').val(nama2);
+              $('#username2').val(username2);
               $('#deletemodal').modal(); 
           }
         </script>
 
         <script>
         function edituser() {
+            var id = $('#id').val();
             $.ajax({
-                type: 'POST',
-                url: 'user/delete',
+                type: 'GET',
+                url: 'user/edit/' + id,
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                    'id': $("#id").val(),
+                    'name': $('#nama').val(),
+                    'username' : $('#username').val(),
+                    'nip' : $('#nip').val(),
+                    'level' : $('#level').val()
+                }
             });
+            location.reload();
+        }
+        </script>
+
+        <script>
+        function deleteuser() {
+            var id2 = $('#id2').val();
+            $.ajax({
+                type: 'GET',
+                url: 'user/delete/' + id2,
+                success: function() {
+                  $('#tebleuser').load('user/tableuser').fadeIn("slow");
+                  $.notify("Data user berhasil dihapus", "success");
+              }
+            });
+            $('#deletemodal').modal('hide');  
         }
         </script>
 @endsection

@@ -45,5 +45,6 @@ Route::post('{id_survey}/{id_Tahapan}/input/tambah/file', 'InputController@tamba
 //user
 Route::get('user', 'UserController@index');
 Route::post('user/create', 'UserController@create');
-Route::post('user/edit/{id_user}', 'UserController@edit');
-Route::post('user/delete', 'UserController@delete'); 
+Route::get('user/edit/{id_user}', 'UserController@edit');
+Route::get('user/delete/{id_user}', 'UserController@delete'); 
+Route::get('user/tableuser', 'UserController@tableuser');

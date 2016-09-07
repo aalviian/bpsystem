@@ -48,23 +48,32 @@ class UserController extends Controller
                 return redirect('/user');   
             } 
             else if ($users->level_user == "2") {
-                return redirect('/user')->withInput(
-                    $request->except('level')
-                );
+                $level="User";
+                $newline="\n";
+                $huruf = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+                $users -> save();
+                Alert::success($users->name.' telah ditambahkan sebagai '.$level.$newline.' username : '.$users->username)->persistent('oke');
+                return redirect('/user');   
             }
-
-           
-             
     }
 
     public function edit($id_user) {
-		return $id_user;	
+        $user = User::find();
+        Session::flash('success_message','Data '.$user -> username.' berhasil di edit');
+        return redirect('/user');
     }
 
     public function delete($id_user) {
     	$data = DB::table('users') -> where('id_user', $id_user) -> first();
     	DB::table('users')->where('id_user', $id_user)->delete();
-        Alert::success($data->name.' berhasil dihapus')->persistent('oke');
         return redirect('/user');  
+    }
+
+    public function tableuser() {
+        $user = DB::table('users')->where('username', session::get('username'))->first();
+        $users = DB::table('users')->orderBy('id_user','desc')->get();
+        $level=$user->level_user;
+        
+        return view('role.superadmin.tableuser', compact('user','users'));
     }
 }
