@@ -7,10 +7,12 @@
         <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     @endsection
 
-    @section('leftNavbar')
+    @section('leftNavbar') 
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
@@ -76,63 +78,58 @@
                         <div class="card-header">
                             <h2>Input Groups</h2>
                             <p>
-                                @if ($errors->has())
-                                <div class="alert alert-danger">
-                                    @foreach ($errors->all() as $error)
-                                        {{ $error }}<br>        
-                                    @endforeach
-                                </div>
+                                @if (count($errors) > 0)
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 @endif
                             </p>
                         </div>
 
                         <div class="card-body card-padding">
-                            <p class="c-black f-500 m-b-5">Basic Example</p>
-                            <small>Place one add-on or button on either side of an input. You may also place one on both sides of an input.</small>
-
-                            <br/><br/>
-
-                            <form action="{{ url('user/create') }}" method="post" name="formtambahuser">
-                            {!! csrf_field() !!}
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
-                                            <div class="fg-line">
-                                                    <input type="text" name="name" class="form-control" placeholder="Full Name" value="{{ old('name') }}">
-                                            </div>
+                            <div class="row">
+                                <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
+                                <div class="col-sm-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                                        <div class="fg-line">
+                                                <input type="text" id="name0" name="name" class="form-control" placeholder="Full Name" required>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-sm-4">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
-                                            <div class="fg-line">
-                                                <input type="number" name="nip" class="form-control" placeholder="NIP" value="{{ old('nip') }}">
-                                            </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+                                        <div class="fg-line">
+                                            <input type="number" id="nip0" name="nip" class="form-control" placeholder="NIP" required>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-sm-4">  
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="zmdi zmdi-pin"></i></span>
-                                            <div class="fg-line">
-                                                <select class="selectpicker" data-live-search="true" name="level"> 
-                                                    <option value="2">User</option>
-                                                    <option value="1">Superadmin</option>
-                                                </select>
-                                            </div>    
-                                        </div>  
-                                    </div>
+                                <div class="col-sm-4">  
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="zmdi zmdi-pin"></i></span>
+                                        <div class="fg-line">
+                                            <select class="selectpicker" data-live-search="true" id="level0" name="level" required> 
+                                                <option value="2">User</option>
+                                                <option value="1">Superadmin</option>
+                                            </select>
+                                        </div>    
+                                    </div>  
                                 </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-sm-5"></div>
-                                    <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-primary">Tambah</button>   
-                                    </div> 
-                                </div>
-                            </form>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-6">
+                                    <button onclick="adduser()" class="btn btn-primary">Tambah</button>   
+                                </div> 
+                            </div>
                         </div>
                     </div>
 
@@ -150,13 +147,13 @@
 
                         <div class="card-body card-padding">
                             <div class="table-responsive">
-                                <table id="data-table" class="table table-striped table-vmiddle">
+                                <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
-                                            <th data-column-id="id" data-type="numeric">No</th>
-                                            <th data-column-id="received" data-order="desc">Nama</th>
-                                            <th data-column-id="sender">Username</th>
-                                            <th data-column-id="sender">NIP</th>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Username</th>
+                                            <th>NIP</th>
                                             <th>Action</th>
                                             
                                         </tr>
@@ -188,7 +185,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Tambah Hak Akses</h4>
+                        <h4 class="modal-title">Ubah Hak Akses</h4>
                     </div>
                     <input type="hidden" id="id">
                     <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
@@ -208,9 +205,8 @@
                         <div class="form-group">
                             <label class="control-label" for="hakakses">Hak Akses</label>
                             <select class="selectpicker" data-live-search="true" id="level" name="level">
-                                <option value="Admin">Admin</option>
-                                <option value="Supervisor">Supervisor</option>
-                                <option value="Operator">Operator</option>
+                                <option value="2">User</option>
+                                <option value="1">Superadmin</option>
                             </select>                 
                         </div>   
                         <br><br>
@@ -230,13 +226,13 @@
                   <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Tambah Hak Akses</h4>
+                        <h4 class="modal-title">Hapus Hak Akses</h4>
                     </div>
                     <input type="hidden" id="id2">
                     <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="username" id="username2" class="form-control" placeholder="Username">
                     <div class="modal-body">
-                        <h3>Apakah anda ingin menghapus <div id="username2"></div> dari database? </h3> 
-                          
+                        <h5>Apakah anda ingin menghapus dari database? </h5> 
                         <br><br>
                     </div>
                          
@@ -247,10 +243,7 @@
                   </div>
                 </div>
             </div>
-        
-        
-
-            <div id="c-grid" class="clearfix" data-columns></div>       
+        <div id="c-grid" class="clearfix" data-columns></div>       
 </section>
 
 @endsection
@@ -262,11 +255,8 @@
         <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
-
-        <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
-        <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
-        <script src="{{ asset('assets/js/notify/curved-line-chart.js') }}"></script>
+        <script src="{{ asset('assets/js/datatables/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('assets/js/datatables/dataTables.bootstrap.min.js') }}"></script>
         <script src="{{ asset('assets/js/notify/notify.js') }}"></script>
         <script src="{{ asset('assets/js/notify/notify.min.js') }}"></script>
         <script>
@@ -301,6 +291,13 @@
                 }
             });
         </script>
+
+        <script>
+        $(document).ready(function() {
+            $('#example').DataTable();
+        });
+        </script>
+
         <script type="text/javascript">
           function openmodaledit(id,nama,username,nip){
               $('#id').val(id);
@@ -321,6 +318,32 @@
         </script>
 
         <script>
+        function adduser() {
+            var name = $('#name0').val();
+            $.ajax({
+                type: 'POST',
+                url: 'user/create',
+                data: {
+                    '_token': $('input[name=_token]').val(),
+                    'name': $('#name0').val(),
+                    'nip' : $('#nip0').val(),
+                    'level' : $('#level0').val()
+                },
+                success: function() {
+                  $('#tableuser').load('user/tableuser').fadeIn("slow");
+                  $.notify("Data "+name+ " berhasil ditambah ke database", "success");
+                },
+                error: function() {
+                  $.notify("Data "+name+ " tidak berhasil ditambah. Silahkan coba kembali", "success");
+                }
+            });
+            $('#name0').val('');
+            $('#nip0').val('');
+            $('#level0').val('');
+        }
+        </script>
+
+        <script>
         function edituser() {
             var id = $('#id').val();
             $.ajax({
@@ -333,22 +356,33 @@
                     'username' : $('#username').val(),
                     'nip' : $('#nip').val(),
                     'level' : $('#level').val()
+                },
+                success: function() {
+                  $('#tableuser').load('user/tableuser').fadeIn("slow");
+                  $.notify("Data "+name+ " berhasil diubah ke database", "success");
+                },
+                error: function() {
+                  $.notify("Data "+name+ " tidak berhasil diubah. Silahkan coba kembali", "success");
                 }
             });
-            location.reload();
+            $('#editmodal').modal('hide');
         }
         </script>
 
         <script>
         function deleteuser() {
             var id2 = $('#id2').val();
+            var username2 = $('#username2').val();
             $.ajax({
                 type: 'GET',
                 url: 'user/delete/' + id2,
                 success: function() {
-                  $('#tebleuser').load('user/tableuser').fadeIn("slow");
-                  $.notify("Data user berhasil dihapus", "success");
-              }
+                  $('#tableuser').load('user/tableuser').fadeIn("slow");
+                  $.notify("Data "+name2+ " berhasil dihapus dari database", "success");
+                },
+                error: function() {
+                  $.notify("Data "+username2+ " tidak berhasil dihapus. Silahkan coba kembali", "success");
+                }
             });
             $('#deletemodal').modal('hide');  
         }

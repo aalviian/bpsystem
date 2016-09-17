@@ -11,7 +11,7 @@
 |
 */
 
-
+ 
 //Login
 Route::get('/','LoginController@index');
 Route::get('login', 'LoginController@formLogin');
@@ -21,7 +21,7 @@ Route::post('login', 'LoginController@login');
 Route::get('logout', 'LoginController@logout');
 
 //Home
-Route::get('home', 'HomeController@index');
+Route::get('home', 'HomeController@index'); 
 
 //Administrasi
 Route::get('{id_survey}/administrasi', 'AdministrasiController@index');
@@ -29,12 +29,19 @@ Route::post('{id_survey}/administrasi/tambah', 'AdministrasiController@postAdmin
 Route::get('{id_survey}/administrasi/{user_hakakses}/edit', 'AdministrasiController@editAdministrasi');
 Route::post('{id_survey}/administrasi/{user_hakakses}/edit', 'AdministrasiController@saveAdministrasi');
 
+//user
+Route::get('user', 'UserController@index');
+Route::post('user/create', 'UserController@create');
+Route::get('user/edit/{id_user}', 'UserController@edit');
+Route::get('user/delete/{id_user}', 'UserController@delete'); 
+Route::get('user/tableuser', 'UserController@tableuser');
 
 //Survey
 Route::get('createsurvey', 'SurveyController@index');
 Route::post('createsurvey', 'SurveyController@create');
 Route::get('survey/{id_survey}', 'SurveyController@survey');
-
+Route::get('survey/{id_survey}/create', 'TahapanController@viewcreatetahapan');
+Route::post('survey/{id_survey}/create', 'TahapanController@viewcreatetahapan');
 Route::get('{id_survey}/{id_tahapan}', 'TahapanController@viewTahapan');
 
 //input data
@@ -42,9 +49,3 @@ Route::get('{id_survey}/{id_tahapan}/input', 'InputController@index');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah', 'InputController@tambah');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah/file', 'InputController@tambahdgnfile');
 
-//user
-Route::get('user', 'UserController@index');
-Route::post('user/create', 'UserController@create');
-Route::get('user/edit/{id_user}', 'UserController@edit');
-Route::get('user/delete/{id_user}', 'UserController@delete'); 
-Route::get('user/tableuser', 'UserController@tableuser');

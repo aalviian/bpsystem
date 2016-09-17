@@ -66,7 +66,7 @@
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
@@ -86,9 +86,11 @@
                     <li @yield('administration')>
                         <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
-                    <li @yield('privilege')>
-                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
+                    @if($user -> level_user == "1")
+                    <li>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
                     </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>
@@ -123,20 +125,21 @@
                     <div class="card">
                        <div class="card-header">
                             <h2>Dashboard <h3>Monitoring Survey {{$survey2->id_survey}}</h3></h2>
-                            <ul class="actions">
+
+                            <ul class="actions">                         
                                 <div class="btn-group">
                                     <button class="btn palette-Teal bg">Program Kegiatan</button>
                                     <button type="button" class="btn palette-Teal bg dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                         <span class="caret"></span>
                                         <span class="sr-only">Split button dropdowns</span>
                                     </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    @foreach($tahapanSurvey2 as $tahapan)
-                                        @if($tahapan->id_survey==$survey2->id_survey)
-                                            <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
-                                        @endif
-                                    @endforeach
-                                </ul>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @foreach($tahapanSurvey2 as $tahapan)
+                                            @if($tahapan->id_survey==$survey2->id_survey)
+                                                <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
+                                            @endif
+                                        @endforeach
+                                    </ul>
                               </div>
                             </ul>
                         </div>
@@ -150,6 +153,9 @@
                             $ambiltahapan = DB::table('survey') -> where('id_survey', $id_survey) -> first();
                             ?>
                             <h2>Kondisi sampai tanggal : {{ $ambiltahapan->tgl_selesai }} </h2>
+                            <ul class="actions">
+                                <a href="{{ url('survey/'.$id_survey.'/create') }}" class="btn palette-Teal bg btn-icon"><i class="zmdi zmdi-plus"></i></a>
+                            </ul>    
                         </div>
                         
                         <div class="card-body card-padding">

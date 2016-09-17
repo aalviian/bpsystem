@@ -66,7 +66,7 @@
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
@@ -85,9 +85,6 @@
                     </li>
                     <li @yield('administration')>
                         <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
-                    </li>
-                    <li @yield('privilege')>
-                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
                     </li>
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>

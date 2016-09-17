@@ -21,7 +21,7 @@
 
     @endsection
 
-   @section('leftNavbar')
+   @section('leftNavbar') 
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
@@ -186,7 +186,7 @@
                                     <option value="Supervisor" <?php if($get_hakakses->hakakses=='Supervisor') echo 'selected' ?> >Supervisor</option>
                                     <option value="Operator" <?php if($get_hakakses->hakakses=='Operator') echo 'selected' ?> >Operator</option>
                                 </select>                                           
-                            </div>
+                            </div> 
                             <br><br>
                             <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
                             <button type="submit" class="btn btn-success pull-rigth">Simpan</button>

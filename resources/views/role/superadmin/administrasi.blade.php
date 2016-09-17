@@ -20,7 +20,7 @@
         <link href="{{ asset('assets/vendors/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/sweetalert-master/dist/sweetalert.css')}}">
     @endsection
-
+ 
     @section('leftNavbar')
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
@@ -157,8 +157,8 @@
                         <table id="data-table" class="table table-striped table-vmiddle">
                             <thead>
                                 <tr>
-                                    <th data-column-id="id" data-type="numeric">No</th>
-                                    <th data-column-id="received" data-order="desc">NIP</th>
+                                    <th data-column-id="id" data-type="numeric" data-order="asc">No</th>
+                                    <th data-column-id="received">NIP</th>
                                     <th data-column-id="sender">Name</th>
                                     <th data-column-id="sender">Hak Akses</th>
                                     @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
@@ -185,7 +185,8 @@
                                     <td>{{ $hakakses -> hakakses }}</td>
                                     @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <td>
-                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a>
+                                        <!-- <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a> -->
+                                        <a  onclick="openmodaledit('<?php echo $user->id_user  ?>','<?php echo $user->name  ?>','<?php echo $user->username  ?>','<?php echo $user->nip_user ?>','<?php echo $hakakses->hakakses ?>')"  class="btn palette-Indigo bg">Edit</a>
                                         
                                         <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn palette-Red bg">Delete</a>
                                     </td>
@@ -199,7 +200,7 @@
             </div>
 
             @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
-            <!-- Modal -->
+            <!-- Tambah Modal -->
             <div class="modal fade" id="TambahHakAkses" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
@@ -209,56 +210,99 @@
                     </div>
                     <form action="{{url($id_survey.'/administrasi/tambah')}}" method="post" name="formtambahtahapan">
                     {!! csrf_field() !!}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="control-label" for="{{$wilayah->nama_wilayah}}">{{$wilayah->nama_wilayah}} </label>
+                                <select class="selectpicker" multiple data-live-search="true" name="wilayah[]">
+                                    <?php
+                                    $data_wilayah = DB::table($id_survey.'-'.$wilayah->nama_wilayah)->get();
+                                    $header_data_wilayah = Schema::getColumnListing($id_survey.'-'.$wilayah->nama_wilayah);
+                                    $count = count($header_data_wilayah);
+                                    ?>
+                                    @foreach($data_wilayah as $f_data_wilayah)
+                                        <option value="{{$f_data_wilayah->$header_data_wilayah[0]}}">{{ $f_data_wilayah->$header_data_wilayah[$count-1] }}</option> 
+                                    @endforeach
+                                </select>
+                            </div>
+                            <?php
+                            $hakakses = DB::table($id_survey.'-hakakses') -> get();
+                            echo count($hakakses);
+
+                            $users = DB::table('users') -> whereNotIn('username', ['alvian', 'kamal', 'aneksa']) ->get();   
+                            ?>
+                            <div class="form-group">
+                                <label class="control-label" for="nip">NIP</label>
+                                <select class="selectpicker" multiple data-live-search="true" name="username">
+                                  @foreach ($users as $f_username)
+                                    <option value="{{$f_username->username}}">{{$f_username->username}}</option> 
+                                   @endforeach 
+                                </select>
+                            </div>              
+                            <div class="form-group">
+                                <label class="control-label" for="hakakses">Hak Akses</label>
+                                
+                                <select class="selectpicker" data-live-search="true" name="hakakses">
+                                    <option value="Admin">Admin</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="Operator">Operator</option>
+                                </select>                
+                                           
+                            </div>
+                                    
+                            <br><br>
+                        </div>
+                             
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
+                            <button type="submit" class="btn btn-success pull-rigth">Tambahkan</button>
+                        </div>
+                    </form>
+                  </div>
+                </div> 
+            </div>
+            @endif
+
+            <!--Edit Modal -->
+            <div class="modal fade" id="editmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"     aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Tambah Hak Akses</h4>
+                    </div>
+                    <input type="hidden" id="id">
+                    <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="control-label" for="{{$wilayah->nama_wilayah}}">{{$wilayah->nama_wilayah}} </label>
-                            <select class="selectpicker" multiple data-live-search="true" name="wilayah[]">
-                                <?php
-                                $data_wilayah = DB::table($id_survey.'-'.$wilayah->nama_wilayah)->get();
-                                $header_data_wilayah = Schema::getColumnListing($id_survey.'-'.$wilayah->nama_wilayah);
-                                $count = count($header_data_wilayah);
-                                ?>
-                                @foreach($data_wilayah as $f_data_wilayah)
-                                    <option value="{{$f_data_wilayah->$header_data_wilayah[0]}}">{{ $f_data_wilayah->$header_data_wilayah[$count-1] }}</option> 
-                                @endforeach
-                            </select>
+                            <label class="control-label" for="">Nama</label>
+                            <input type="text" name="name" id="nama" class="form-control" placeholder="Full Name">
                         </div>
-                        <?php
-                        $hakakses = DB::table($id_survey.'-hakakses') -> get();
-                        echo count($hakakses);
-
-                        $users = DB::table('users') -> whereNotIn('username', ['alvian', 'kamal', 'aneksa']) ->get();   
-                        ?>
+                        <div class="form-group">
+                            <label class="control-label" for="nip">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="Username">
+                        </div>  
                         <div class="form-group">
                             <label class="control-label" for="nip">NIP</label>
-                            <select class="selectpicker" multiple data-live-search="true" name="username">
-                              @foreach ($users as $f_username)
-                                <option value="{{$f_username->username}}">{{$f_username->username}}</option> 
-                               @endforeach 
-                            </select>
+                            <input type="text" name="nip" id="nip" class="form-control" placeholder="Username">
                         </div>              
                         <div class="form-group">
                             <label class="control-label" for="hakakses">Hak Akses</label>
-                            
-                            <select class="selectpicker" data-live-search="true" name="hakakses">
+                            <select class="selectpicker" data-live-search="true" id="level" name="level">
                                 <option value="Admin">Admin</option>
                                 <option value="Supervisor">Supervisor</option>
                                 <option value="Operator">Operator</option>
-                            </select>                
-                                       
-                        </div>
-                                
+                            </select>                 
+                        </div>   
                         <br><br>
                     </div>
                          
                     <div class="modal-footer">
                         <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
-                        <button type="submit" class="btn btn-success pull-rigth">Tambahkan</button>
+                        <button onclick="edituser()" class="btn btn-success pull-rigth">Tambahkan</button>
                     </div>
-                    </form>
+                  </div>
                 </div>
-            </div> 
-            @endif
+            </div>
 
         </div>
   </section>
@@ -369,5 +413,15 @@
             e.preventDefault();
           });
         });
+        </script>
+        <script type="text/javascript">
+          function openmodaledit(id,nama,username,nip,hakakses){
+              $('#id').val(id);
+              $('#nama').val(nama);
+              $('#username').val(username);
+              $('#nip').val(nip);
+              $('#hakakses').val(hakakses);
+              $('#editmodal').modal(); 
+          }
         </script>
 @endsection

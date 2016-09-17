@@ -399,4 +399,18 @@ class SurveyController extends Controller
         }
         Schema::drop($id_survey.'-hakakses-wilayah');
     }
+
+    public function viewcreatetahapan($id_survey) {
+        $user = DB::table('users')->where('username', session::get('username'))->first();
+        $level=$user->level_user;
+        $survey=DB::table('survey')->get();
+        $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
+        $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
+        if($level == "1") {
+            return view('role.superadmin.createtahapan', compact('user', 'survey','id_survey','$survey','survey2','tahapanSurvey2'));
+        }else{
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
+        } 
+    }
 }

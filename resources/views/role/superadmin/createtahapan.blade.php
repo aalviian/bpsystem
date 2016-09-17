@@ -12,7 +12,7 @@
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
                 </div>
- 
+
                 <ul class="smm-alerts">
                     <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
                         <i class="zmdi zmdi-email"></i>
@@ -27,19 +27,35 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/') }}"><i class="zmdi zmdi-home"></i> Home</a>
+                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Home</a>
                     </li>
-                    
+
                     <li class="sub-menu">
                         <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('createsurvey') }}"> Create new</a>
+                                <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
                                 <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
+                        <ul>
+                                @foreach($tahapanSurvey2 as $f_tahapan)
+                                <li>
+                                    <?php
+                                        $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
+                                    ?>
+                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                </li>
+                                @endforeach
+                        </ul>
+                    </li>
+                    <li @yield('administration')>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
                     @if($user -> level_user == "1")
                     <li>
@@ -56,10 +72,17 @@
                                     <li><a href="colored-header.html">Pencacahan</a></li>
                                 </ul>
                             </li>
+                            <li class="sub-menu">
+                                <a href="" data-ma-action="submenu-toggle">SUSENAS</a>
+                                <ul>
+                                    <li><a href="alternative-header.html">Pemutakhiran</a></li>
+                                    <li><a href="colored-header.html">Pencacahan</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-            </aside>
+        </aside>
     @endsection
 
     @section('content')
@@ -67,13 +90,14 @@
             <div class="container">
                 <ul class="breadcrumb" style="margin-bottom: 5px;">
                   <li><a href="{{URL('/')}}">Home</a></li>
+                  <li><a href="{{URL('survey/'.$id_survey)}}">{{ $id_survey }}</a></li>
                   <li class="active">Create Survey</li>
                 </ul>
                 <div class="card">
                     <div class="card-body card-padding">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Form Monitoring/Survey <small>Create</small></h2>        
+                                <h2>Create Tahapan</h2>        
                                 <div class="clearfix"></div>
                             </div>
                         
@@ -87,7 +111,7 @@
                                             <span class="step_no">1</span>
                                             <span class="step_descr">
                                                 Step 1<br />
-                                                <small>Monitoring/Survey</small>
+                                                <small>Tahapan</small>
                                             </span>
                                           </a>
                                         </li>
@@ -96,57 +120,16 @@
                                             <span class="step_no">2</span>
                                             <span class="step_descr">
                                                 Step 2<br />
-                                                <small>Tahapan</small>
-                                            </span>
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <a href="#step-3">
-                                            <span class="step_no">3</span>
-                                            <span class="step_descr">
-                                                Step 3<br />
                                                 <small>Cakupan Wilayah</small>
                                             </span>
                                           </a>
                                         </li>
                                     </ul>
                                     
-                                    <form id="formSurvey" class="form-horizontal form-label-left" action="{{url('createsurvey')}}" method="post" enctype="multipart/form-data">
+                                    <form id="formSurvey" class="form-horizontal form-label-left" action="{{url('survey/'.$id_survey.'/create')}}" method="post" enctype="multipart/form-data">
                                     {!! csrf_field() !!}
                                         <div id="step-1">
-                                            <h2 class="StepTitle">Step 1 Monitoring / Survey</h2>
-                                            <br>
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="surveyname">Nama Survey </label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                  <input type="text" id="surveyname" name="surveyname" required="required" class="form-control col-md-7 col-xs-12">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="surveyidentity">Identitas Survey </label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                  <input type="text" id="surveyidentity" name="surveyidentity" required="required" class="form-control col-md-7 col-xs-12">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Mulai </label>
-                                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                                  <input id="tgl_mulai" name="tgl_mulai" class="date-picker form-control col-md-7 col-xs-12" data-date-format="YYYY-MM-DD" required="required" type="text">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Tanggal Selesai </label>
-                                                <div class="col-md-2 col-sm-6 col-xs-12">
-                                                  <input id="tgl_selesai" name="tgl_selesai" class="date-picker form-control col-md-7 col-xs-12" data-date-format="YYYY-MM-DD" required="required" type="text">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div id="step-2">
-                                            <h2 class="StepTitle">Step 2 Tahapan
+                                            <h2 class="StepTitle">Step 1 Tahapan
                                                 <input class="pull-right" type="button" name="remove_tahapan" value="-" id="remove_tahapan">
                                                 <input class="pull-right" type="button" name="add_tahapan" value="+" data-toggle="modal" href="#modalTambahTahapan">
                                             </h2>
@@ -166,8 +149,8 @@
                                             </table>                                 
                                         </div>
 
-                                        <div id="step-3">
-                                            <h2 class="StepTitle">Step 3 Cakupan Wilayah
+                                        <div id="step-2">
+                                            <h2 class="StepTitle">Step 2 Cakupan Wilayah
                                                 <input class="pull-right" type="button" name="remove_wil" value="-" id="remove_wil">
                                                 <input class="pull-right" type="button" name="add_wil" value="+" id="add_wil">
                                             </h2>
