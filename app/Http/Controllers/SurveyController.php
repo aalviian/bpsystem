@@ -4,20 +4,21 @@ namespace App\Http\Controllers;
 
 use Request;
 use DB; 
+use Date;
 use DateTime;
+use DateTimeZone;
 use Session;
 use Schema;
 use Excel;
 use Alert;
-use DateTimeZone;
 use Illuminate\Database\Schema\Blueprint;
 
 use App\Http\Requests;
 
 class SurveyController extends Controller
 {
-    //INDEX
-    public function index()
+    //INDEX 
+    public function index() 
     {  
         $user = DB::table('users')->where('username', session::get('username'))->first();
         $level=$user->level_user;
@@ -199,7 +200,6 @@ class SurveyController extends Controller
         if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
             $user=DB::table('users') -> where('username', Session::get('username')) -> first();
             $level=$user->level_user;
-
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();

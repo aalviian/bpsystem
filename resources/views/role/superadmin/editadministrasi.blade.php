@@ -66,11 +66,13 @@
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration</a>
+                        <a href="{{ url($survey->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey->id_survey }}</a>
                     </li>
-                    <li @yield('privilege')>
-                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
+                    @if($user -> level_user == "1")
+                    <li>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
                     </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>

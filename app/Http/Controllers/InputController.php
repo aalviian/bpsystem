@@ -10,23 +10,25 @@ use Session;
 use Schema;
 use Excel;
 use Alert;
-use Date;
+use Date; 
 use Illuminate\Support\Str; 
 
 class InputController extends Controller
 {
     public function index($id_survey,$id_tahapan) {
+
         if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
             $user=DB::table('users')->where('username', session::get('username')) ->first();
             $level=$user->level_user;
 
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
-            $tahapan = DB::table('tahapansurvey') ->where('id_tahapan',$id_tahapan)->where('id_survey', $id_survey)->first();
+            $tahapan = DB::table('tahapansurvey') ->where('id_tahapan',$id_tahapan)->where('id_survey', $id_survey)->first(); 
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
             $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
-            return view('role.superadmin.inputprogress',compact('user','id_survey','id_tahapan','survey','survey2','tahapan','tahapanSurvey2','daftarWilayah','level'));
-        }
+            return view('role.superadmin.inputprogress',compact('user','id_survey','id_tahapan','survey','survey2','tahapan','tahapanSurvey2','daftarWilayah','level')); 
+        } 
+
         $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
         if($users){
             $user=DB::table('users') -> where('username', Session::get('username')) -> first();
@@ -62,7 +64,10 @@ class InputController extends Controller
                         $count_wil = Request::get('count_wil');
                         $count_input = Request::get('count_input');
                         $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
-                        $tahapan = DB::table('tahapansurvey') -> where('id_tahapan', $id_tahapan) -> where('id_survey', $id_survey) -> first();
+                        $tahapan = DB::table('tahapansurvey') -> where([
+                                                                    ['id_tahapan', '=', $id_tahapan],
+                                                                    ['id_survey', '=', $id_survey],
+                                                                ]) -> first();
                         $header_wilayah = Schema::getColumnListing($id_survey.'-'.$tahapan->nama_tahapan);
                         for($i=0;$i<count($header_wilayah);$i++){
                             if($i<count($count_wil)){
@@ -161,7 +166,10 @@ class InputController extends Controller
                     $count_wil = Request::get('count_wil');
                     $count_input = Request::get('count_input');
                     $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
-                    $tahapan = DB::table('tahapansurvey') -> where('id_tahapan', $id_tahapan) -> first();
+                    $tahapan = DB::table('tahapansurvey') -> where([
+                                                                ['id_tahapan', '=', $id_tahapan],
+                                                                ['id_survey', '=', $id_survey],
+                                                            ]) -> first();
                     $header_wilayah = Schema::getColumnListing($id_survey.'-'.$tahapan->nama_tahapan);
                     for($i=0;$i<count($header_wilayah);$i++){
                         if($i<count($count_wil)){
@@ -262,8 +270,6 @@ class InputController extends Controller
         $dat = Request::file('data');
         $exdata = Excel::selectSheetsByIndex(0)->load($dat, function($reader) {})->get();
         $wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
-
-
         foreach ($exdata->toArray() as $f_exdata) {
             $row1_create=$f_exdata;
             $row2_create=$f_exdata;
@@ -339,6 +345,5 @@ class InputController extends Controller
         }
         Alert::success('Data telah berhasil ditambahkan')->persistent('Oke');
             return redirect($id_survey.'/'.$id_tahapan.'/input');
-        
     }
 }

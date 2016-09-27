@@ -4,10 +4,10 @@
     @endsection
 
     @section('css')
-        <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet"><!-- 
         <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet"> -->
     @endsection
 
     @section('leftNavbar')
@@ -74,7 +74,16 @@
                 </ol>
                 <div class="card">
                     <div class="card-header">
-                        <h2>Dashboard <h3>Sistem Monitoring Survei dan Sensus</3></h2>
+                        @if (session()->has('flash_notif.message'))
+                            <div class="container">
+                                <div class="alert alert-{{ session()->get('flash_notif.level') }}">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {!! session()->get('flash_notif.message') !!}
+                                </div>
+                            </div>
+                        @endif
+
+                        <h2>Dashboard<h3>Sistem Monitoring Survei dan Sensus</3></h2>
 
                         <ul class="actions">
                             <li>
@@ -136,52 +145,43 @@
                             <div class="card-header">
                                 <h2>Recent Activities <small>log activities</small></h2>
                             </div>
-
                             <div class="list-group lg-alt">
-                                <a href="" class="list-group-item media">
-                                    <div class="pull-left">
-                                        <img class="avatar-img mCS_img_loaded" src="{{ asset('assets/img/users/alvian.jpg') }}" alt="">
-                                    </div>
+                            <?php
+                                DB::table('loguser')->join('users', 'id_users', '=', 'users.id_user')->orderBy('id_log','desc')->chunk(5, function($loguser) {
+                                $user = DB::table('users') -> where('username', session::get('username')) -> first();
+                                foreach ($loguser as $loguser) {
+                                    if ($loguser -> waktu_logout == "0000-00-00 00:00:00") {
+                                        $status = "Online";
+                                        $tanggal = "Login : ".$loguser ->waktu_login;
+                                    }
+                                    else {
+                                        $status = "Offline"; 
+                                        $tanggal = "Logout : ".$loguser ->waktu_logout;     
+                                    }
+                                ?>
+                                    <a href="" class="list-group-item media">
+                                        <div class="pull-left">
+                                            <img class="avatar-img mCS_img_loaded" src="{{ asset('assets/img/users/alvian.jpg') }}" alt="">
+                                        </div>
 
-                                    <div class="media-body">
-                                        <div class="lgi-heading">Muhammad Alvian Supriadi</div>
-                                        <b><font color="blue">P2TIK</font></b>
-                                        <h5><div class="lgi-heading">2 second ago</div></h5>
-                                    </div>
-                                </a>
-                                <a href="" class="list-group-item media">
-                                    <div class="pull-left">
-                                        <img class="avatar-img mCS_img_loaded" src="{{ asset('assets/img/users/andy.jpg') }}" alt="">
-                                    </div>
-
-                                    <div class="media-body">
-                                        <div class="lgi-heading">Andy Eka Saputra</div>
-                                        <b><font color="blue">P2TIK</font></b>
-                                        <h5><div class="lgi-heading">30 second ago</div></h5>
-                                    </div>
-                                </a>
-                                <a href="" class="list-group-item media">
-                                    <div class="pull-left">
-                                        <img class="avatar-img mCS_img_loaded" src="{{ asset('assets/img/users/kamal.jpg') }}" alt="">
-                                    </div>
-
-                                    <div class="media-body">
-                                        <div class="lgi-heading">Muhammad Kamal Hidayatullah</div>
-                                        <b><font color="blue">P2TIK</font></b>
-                                        <h5><div class="lgi-heading">45 second ago</div></h5>
-                                    </div>
-                                </a>
-                                <a href="" class="list-group-item media">
-                                    <div class="pull-left">
-                                        <img class="avatar-img mCS_img_loaded" src="{{ asset('assets/img/users/hengky.jpg') }}" alt="">
-                                    </div>
-
-                                    <div class="media-body">
-                                        <div class="lgi-heading">Hengky Rachmadani</div>
-                                        <b><font color="blue">P2TIK</font></b>
-                                        <h5><div class="lgi-heading">56 second ago</div></h5>
-                                    </div>
-                                </a>
+                                        <div class="media-body">
+                                            @if($loguser->id_users == $user->id_user)
+                                                <b><div class="lgi-heading">You</div></b>
+                                            @else
+                                                <div class="lgi-heading">{{$loguser->name}}</div>
+                                            @endif
+                                            @if ($loguser -> waktu_logout == "0000-00-00 00:00:00") 
+                                                <b><font color="blue">{{$status}}</font></b>
+                                            @else
+                                                <b><font color="red">{{$status}}</font></b>
+                                            @endif
+                                            <h5><div class="lgi-heading">{{$tanggal}}</div></h5>
+                                        </div>
+                                    </a>
+                                <?php
+                                    }
+                                });
+                            ?>
                             </div>
 
                             <a href="" class="list-group-item view-more">
@@ -201,10 +201,10 @@
 
 @section('js')
         <!-- Javascript Libraries -->
-        <script src="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+        <!--<script src="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/Waves/dist/waves.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script>
+        <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script> -->
         <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
 
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>

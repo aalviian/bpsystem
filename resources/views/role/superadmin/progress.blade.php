@@ -66,7 +66,7 @@
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$f_survey->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
@@ -86,6 +86,11 @@
                     <li @yield('administration')>
                         <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
+                    @if($user -> level_user == "1")
+                    <li class="sub-menu">
+                        <a href="{{ url('/user') }}" data-ma-action="submenu-toggle"><i class="zmdi zmdi-home"></i> Users</a>
+                    </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>

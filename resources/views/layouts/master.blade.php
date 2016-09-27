@@ -72,8 +72,7 @@
                                     $i++; 
                                     $palette = "palette-".$color."-400 bg zmdi zmdi-folder-outline";
                                     ?>
-                                        <i class="{{ $palette }}"></i>
-                                        <small>{{ $f_survey -> id_survey}}</small>
+                                       <a href="{{ url('survey/'.$f_survey->id_survey) }}"> <i class="{{ $palette }}"></i><small>{{ $f_survey -> id_survey}}</small></a>
                             </a>
                         </li>
                         @endforeach
@@ -98,7 +97,7 @@
                 </li>
                 <li class="hm-alerts" data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
                     <a href=""><i class="hm-icon zmdi zmdi-notifications"></i></a>
-                </li>
+                </li> 
                 <li class="dropdown hm-profile">
                     <a data-toggle="dropdown" href="">
                         <img src="{{ asset('assets/img/profile-pics/1.jpg') }}" alt="">
@@ -115,7 +114,7 @@
                             <a href=""><i class="zmdi zmdi-settings"></i> Settings</a>
                         </li>
                         <li>
-                            <a href="{{ url('/logout') }}"><i class="zmdi zmdi-time-restore"></i> Logout</a>
+                            <a href="{{ url('/logout/'.$user -> id_user) }}"><i class="zmdi zmdi-time-restore"></i> Logout</a>
                         </li>
                     </ul>
                 </li>

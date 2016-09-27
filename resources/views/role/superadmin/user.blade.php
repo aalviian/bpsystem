@@ -12,11 +12,11 @@
         <link href="{{ asset('assets/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     @endsection
 
-    @section('leftNavbar') 
+    @section('leftNavbar')  
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
-                </div>
+                </div> 
 
                 <ul class="smm-alerts">
                     <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">

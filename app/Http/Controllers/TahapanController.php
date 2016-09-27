@@ -23,8 +23,8 @@ class TahapanController extends Controller
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
-
-            return view('role.superadmin.tahapansurvey', compact('user','id_survey','id_tahapan','survey', 'survey2', 'tahapanSurvey2'));
+            $tahapan = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> where('id_tahapan', $id_tahapan) -> first();
+            return view('role.superadmin.tahapansurvey', compact('user','id_survey','id_tahapan','survey', 'survey2', 'tahapanSurvey2','tahapan'));
         }
         $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
         if($users) { 

@@ -15,7 +15,7 @@ use Alert;
 use DateTimeZone;
 use App\User;
  
-class UserController extends Controller
+class UserController extends Controller 
 {
     public function index() {
         $user = DB::table('users')->where('username', session::get('username'))->first();

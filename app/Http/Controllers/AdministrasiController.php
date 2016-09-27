@@ -16,7 +16,7 @@ use App\Http\Requests;
 class AdministrasiController extends Controller
 {
     //VIEW ADMINISTRASI 
-    public function index($id_survey){
+    public function index($id_survey){ 
         if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
         	$user = DB::table('users')->where('username', session::get('username'))->first();
             $level=$user->level_user;

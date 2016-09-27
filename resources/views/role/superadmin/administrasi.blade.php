@@ -4,21 +4,22 @@
     @endsection
     
     @section('css')
+        <link href="{{ asset('assets/css/jquery-confirm.css') }}" rel="stylesheet"> 
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
+        <!--link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet"> -->
 
  
         <link href="{{ asset('assets/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/farbtastic/farbtastic.css') }}" rel="stylesheet">
+        <!--<link href="{{ asset('assets/vendors/farbtastic/farbtastic.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/chosen/chosen.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/summernote/dist/summernote.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/vendors/sweetalert-master/dist/sweetalert.css')}}">
+        <link href="{{ asset('assets/vendors/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet"> -->
     @endsection
  
     @section('leftNavbar')
@@ -71,9 +72,11 @@
                     <li @yield('administration')>
                         <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
-                    <li @yield('privilege')>
-                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
+                    @if($user -> level_user == "1")
+                    <li>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
                     </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>
@@ -105,7 +108,6 @@
                     <li><a href="{{ url($id_survey) }}">{{ $id_survey }}</a></li>
                     <li>Administrasi</li>
                 </ol>
-
                 <div class="card">
                     <div class="card-header">
                         <h2>Remember :<small>
@@ -128,13 +130,27 @@
                         </div>
                     </div>
                 </div>
-                
+                <?php
+                  date_default_timezone_set("Asia/Jakarta"); 
+                  $now = date('Y-m-d'); //Returns IST  
+                  $tglskrg = date_create($now);
+                  $tgldeadline = date_create($survey2->tgl_selesai);
+                  $interval = date_diff($tgldeadline, $tglskrg); 
+                ?>
                 <!-- Form 1 -->
                 <div class="card">
                     <div class="card-header cw-header palette-Blue-400 bg">
                         <h2><font color="white">Tabel Daftar Pengguna {{$id_survey}}</font></h2>
                         @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
-                        <a  data-toggle="modal" href="#TambahHakAkses" class="btn palette-Red bg btn-float waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></a>
+                            @if ($interval->format('%a') > 0)
+                              @if ( $interval->format('%R') == "+" )
+                                <a class="example2-1 btn palette-Red bg btn-float waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></a>
+                              @elseif ( $interval->format('%R') == "-" )
+                                <a  data-toggle="modal" href="#TambahHakAkses" class="btn palette-Red bg btn-float waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></a>
+                              @endif
+                            @else ($interval->format('%a') == 0)
+                               <a  data-toggle="modal" href="#TambahHakAkses" class="btn palette-Red bg btn-float waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></a>
+                            @endif     
                         @endif
                     </div>
                     <br>
@@ -142,7 +158,7 @@
                     <div class="card-body card-padding">
                                         <div class="form-group">
                                             <div class="col-md-2"></div>
-                                            <label class="control-label col-md-2">Username:</label>
+                                            <label class="control-label col-md-2">Username</label>
                                             <div class="col-md-4">                                                
                                                 <input id="quick-search" class="form-control"/>
                                             </div>
@@ -185,8 +201,8 @@
                                     <td>{{ $hakakses -> hakakses }}</td>
                                     @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <td>
-                                        <!-- <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a> -->
-                                        <a  onclick="openmodaledit('<?php echo $user->id_user  ?>','<?php echo $user->name  ?>','<?php echo $user->username  ?>','<?php echo $user->nip_user ?>','<?php echo $hakakses->hakakses ?>')"  class="btn palette-Indigo bg">Edit</a>
+                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a>
+                                        <!-- <a  onclick="openmodaledit('<?php echo $user->id_user  ?>','<?php echo $user->name  ?>','<?php echo $user->username  ?>','<?php echo $user->nip_user ?>','<?php echo $hakakses->hakakses ?>')"  class="btn palette-Indigo bg">Edit</a> -->
                                         
                                         <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn palette-Red bg">Delete</a>
                                     </td>
@@ -224,18 +240,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <?php
-                            $hakakses = DB::table($id_survey.'-hakakses') -> get();
-                            echo count($hakakses);
 
-                            $users = DB::table('users') -> whereNotIn('username', ['alvian', 'kamal', 'aneksa']) ->get();   
-                            ?>
                             <div class="form-group">
-                                <label class="control-label" for="nip">NIP</label>
+                                <label class="control-label" for="nip">Username</label>
                                 <select class="selectpicker" multiple data-live-search="true" name="username">
-                                  @foreach ($users as $f_username)
-                                    <option value="{{$f_username->username}}">{{$f_username->username}}</option> 
-                                   @endforeach 
+
                                 </select>
                             </div>              
                             <div class="form-group">
@@ -309,119 +318,132 @@
 @endsection
 
 @section('js')
-        <script src="{{ asset('assets/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/summernote/dist/summernote-updated.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
+<!--         <script src="{{ asset('assets/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/summernote/dist/summernote-updated.min.js') }}"></script> -->
+<!-- 
+    <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script> --> -->
+    <script src="{{ asset('assets/vendors/bower_components/autosize/dist/autosize.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
 
-        <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/autosize/dist/autosize.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
+    <!-- <script src="{{ asset('assets/vendors/input-mask/input-mask.min.js') }}"></script> -->
+    <script src="{{ asset('assets/vendors/bower_components/chosen/chosen.jquery.min.js') }}"></script>
+    <!-- <script src="{{ asset('assets/vendors/farbtastic/farbtastic.min.js') }}"></script> -->
+    <script src="{{ asset('assets/vendors/fileinput/fileinput.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.updated.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/jqueryui/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/jqueryui/icheck.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-confirm.js') }}"></script>
 
-        <script src="{{ asset('assets/vendors/input-mask/input-mask.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/chosen/chosen.jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/farbtastic/farbtastic.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/fileinput/fileinput.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.updated.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('assets/jqueryui/jquery-ui.min.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('assets/jqueryui/icheck.min.js') }}"></script>
+    <script>
+    $(function() {
 
-        <script>
-        $(function() {
-   
-            var data_1 = [
-                "aneksa",
-                "alvian",
-                "dyetra",
-                "eka",
-                "hengky",
-                "kamal",
-                "supriadi"
-            ];
+        var data_1 = [
+            "aneksa",
+            "alvian",
+            "dyetra",
+            "eka",
+            "hengky",
+            "kamal",
+            "supriadi"
+        ];
+
+        $("#quick-search").autocomplete({
+            source: data_1,
+            open: function(event, ui) {
+                
+                var autocomplete = $(".ui-autocomplete:visible");
+                var oldTop = autocomplete.offset().top;
+                var newTop = oldTop - $("#quick-search").height() + 25;
+                autocomplete.css("top", newTop);
+                
+            }
+        });
+        
+    });            
+    </script>
     
-            $("#quick-search").autocomplete({
-                source: data_1,
-                open: function(event, ui) {
-                    
-                    var autocomplete = $(".ui-autocomplete:visible");
-                    var oldTop = autocomplete.offset().top;
-                    var newTop = oldTop - $("#quick-search").height() + 25;
-                    autocomplete.css("top", newTop);
-                    
-                }
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //Basic Example
+            $("#data-table-basic").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
             });
             
-        });            
-        </script>
-        
-
-        <!-- Data Table -->
-        <script type="text/javascript">
-            $(document).ready(function(){
-                //Basic Example
-                $("#data-table-basic").bootgrid({
-                    css: {
-                        icon: 'zmdi icon',
-                        iconColumns: 'zmdi-view-module',
-                        iconDown: 'zmdi-expand-more',
-                        iconRefresh: 'zmdi-refresh',
-                        iconUp: 'zmdi-expand-less'
-                    },
-                });
-                
-                //Selection
-                $("#data-table-selection").bootgrid({
-                    css: {
-                        icon: 'zmdi icon',
-                        iconColumns: 'zmdi-view-module',
-                        iconDown: 'zmdi-expand-more',
-                        iconRefresh: 'zmdi-refresh',
-                        iconUp: 'zmdi-expand-less'
-                    },
-                    selection: true,
-                    multiSelect: true,
-                    rowSelect: true,
-                    keepSelection: true
-                });
-                
-                //Command Buttons
-                $("#data-table-command").bootgrid({
-                    css: {
-                        icon: 'zmdi icon',
-                        iconColumns: 'zmdi-view-module',
-                        iconDown: 'zmdi-expand-more',
-                        iconRefresh: 'zmdi-refresh',
-                        iconUp: 'zmdi-expand-less'
-                    },
-                    formatters: {
-                        "commands": function(column, row) {
-                            return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
-                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
-                        }
-                    }
-                });
+            //Selection
+            $("#data-table-selection").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                selection: true,
+                multiSelect: true,
+                rowSelect: true,
+                keepSelection: true
             });
-        </script>
-        <script>
-        $(document).ready(function(){
-          $('.dropdown-submenu a.test').on("click", function(e){
-            $(this).next('ul').toggle();
-            e.stopPropagation();
-            e.preventDefault();
+            
+            //Command Buttons
+            $("#data-table-command").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function(column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
+                        "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+    $(document).ready(function(){
+      $('.dropdown-submenu a.test').on("click", function(e){
+        $(this).next('ul').toggle();
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    });
+    </script>
+    <script type="text/javascript">
+      function openmodaledit(id,nama,username,nip,hakakses){
+          $('#id').val(id);
+          $('#nama').val(nama);
+          $('#username').val(username);
+          $('#nip').val(nip);
+          $('#hakakses').val(hakakses);
+          $('#editmodal').modal(); 
+      }
+    </script>
+    <script type="text/javascript">
+        $('.example2-1').on('click', function () {
+          $.alert({
+              animation: 'rotateYR',
+              closeAnimation: 'rotateYR',
+              theme: 'white',
+              icon: 'fa fa-spinner fa-spin',
+              title: 'Ops, maaf :(',
+              content: 'Batas deadline sudah lewat'
           });
         });
-        </script>
-        <script type="text/javascript">
-          function openmodaledit(id,nama,username,nip,hakakses){
-              $('#id').val(id);
-              $('#nama').val(nama);
-              $('#username').val(username);
-              $('#nip').val(nip);
-              $('#hakakses').val(hakakses);
-              $('#editmodal').modal(); 
-          }
-        </script>
+    </script>
 @endsection

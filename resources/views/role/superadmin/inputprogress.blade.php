@@ -3,7 +3,9 @@
         Dashboard
     @endsection
 
-    @section('css') 
+    @section('css')
+        <link href="{{ asset('assets/css/jquery-confirm.css') }}" rel="stylesheet"> 
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
@@ -23,7 +25,7 @@
 .bulk-actions {
   display: none;
 }
-table.countries_list {
+table.countries_list { 
   width: 100%;
 }
 table.countries_list td {
@@ -295,7 +297,7 @@ div.box {
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
@@ -315,9 +317,11 @@ div.box {
                     <li @yield('administration')>
                         <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
                     </li>
-                    <li @yield('privilege')>
-                        <a href="{{ url('/privilege') }}"><i class="zmdi zmdi-collection-text"></i> Pusat Data</a>
+                    @if($user -> level_user == "1")
+                    <li class="sub-menu">
+                        <a href="{{ url('/user') }}" data-ma-action="submenu-toggle"><i class="zmdi zmdi-home"></i> Users</a>
                     </li>
+                    @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
                         <ul>
@@ -377,73 +381,111 @@ div.box {
                 </div>
             </div>
 
+            <?php
+              date_default_timezone_set("Asia/Jakarta"); 
+              $now = date('Y-m-d'); //Returns IST  
+              $tglskrg = date_create($now);
+              $tgldeadline = date_create($tahapan->tgl_selesai);
+              $interval = date_diff($tgldeadline, $tglskrg); 
+            ?>
+
             @if($level=="Admin" || $level=="Operator" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
             <div class="card">
-                <div class="card-header">
-                    <h2><img src="{{ asset('assets/img/input.png') }}"  width="40" height="40" > Input Progres {{ $tahapan -> nama_tahapan}}</h2>
-                    <br>
-                    <div class="row">
-                        <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambah') }}">
-                        {!! csrf_field() !!}
-                        <div class="col-sm-6 m-b-20">
-                            <?php
-                                $count_wil=1
-                            ?>
-                            <p>Input data dengan form</p>
-                            @foreach ($daftarWilayah as $f_daftarWilayah)
-                                <p class="f-500 m-b-15 c-black">{{$f_daftarWilayah->nama_wilayah}} :</p>
-                                <select class="selectpicker" data-live-search="true" name="wilayah{{$count_wil}}" required>
-                                    <?php
-                                    $dataWilayah = DB::table($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah)->get();
-                                    $nameWilayah = Schema::getColumnListing($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah);
-                                    $count = count($nameWilayah);
-                                    ?>
-                                                    
-                                    @foreach($dataWilayah as $f_dataWilayah)
-                                    <option value="{{$f_dataWilayah->$nameWilayah[0]}}">{{ $f_dataWilayah->$nameWilayah[$count-1] }} {{$f_dataWilayah->$nameWilayah[0]}}</option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="count_wil[]" value="{{$count_wil++}}">
+              <div class="card-header">
+              @if ($interval->format('%a') > 0)
+                @if ( $interval->format('%R') == "+" )
+                  <div class="alert alert-danger" role="alert">
+                    <marquee><strong>Tahap {{ $tahapan -> nama_tahapan }} - {{ $survey2 -> nama_survey }} ({{$survey2->id_survey}})</strong> Sudah ditutup</marquee>
+                  </div>
+                @elseif ( $interval->format('%R') == "-" )
+                <div class="alert alert-info" role="alert">
+                  <marquee><strong>Tahap {{ $tahapan -> nama_tahapan }} - {{ $survey2 -> nama_survey }} ({{$survey2->id_survey}})!</strong> tersisa {{ $interval->format('%a') }} hari lagi.</marquee>
+                </div>
+                @endif 
+              @else ($interval->format('%a') == 0)
+                <div class="alert alert-info" role="alert">
+                  <marquee><strong>Tahap {{ $tahapan -> nama_tahapan }} - {{ $survey2 -> nama_survey }} ({{$survey2->id_survey}})!</strong> sudah deadline! Harap mengisi jumlah data setiap targetnya.</marquee>
+                </div>
+              @endif
+                <h2><img src="{{ asset('assets/img/input.png') }}"  width="40" height="40" > Input Progres {{ $tahapan -> nama_tahapan}}</h2>
+                <br>
+                <div class="row">
+                  <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambah') }}">
+                    {!! csrf_field() !!}
+                    <div class="col-sm-6 m-b-20">
+                        <?php
+                            $count_wil=1
+                        ?>
+                        <p>Input data dengan form</p>
+                        @foreach ($daftarWilayah as $f_daftarWilayah)
+                            <p class="f-500 m-b-15 c-black">{{$f_daftarWilayah->nama_wilayah}} :</p>
+                            <select class="selectpicker" data-live-search="true" name="wilayah{{$count_wil}}" required>
+                                <?php
+                                $dataWilayah = DB::table($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah)->get();
+                                $nameWilayah = Schema::getColumnListing($f_daftarWilayah->id_survey.'-'.$f_daftarWilayah->nama_wilayah);
+                                $count = count($nameWilayah);
+                                ?>
+                                                
+                                @foreach($dataWilayah as $f_dataWilayah)
+                                <option value="{{$f_dataWilayah->$nameWilayah[0]}}">{{ $f_dataWilayah->$nameWilayah[$count-1] }} {{$f_dataWilayah->$nameWilayah[0]}}</option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" name="count_wil[]" value="{{$count_wil++}}">
+                            <br>
+                            <br>
+                        @endforeach
+                        <?php 
+                            $nametahapan = Schema::getColumnListing($id_survey.'-'.$tahapan->nama_tahapan);
+                            $counttahapan = count($nametahapan);
+                            $typetahapan = DB::select("select data_type from information_schema.columns where table_name='$id_survey-$tahapan->nama_tahapan'");
+                            $count_input=1;
+                            $count=DB::table('wilayah')->where('id_survey', $id_survey)->get();
+                            for($i=count($count);$i<$counttahapan-5;$i++){ ?>
+                                <p class="f-500 m-b-15 c-black">{{ $nametahapan[$i] }}</p>
+                                <input type="<?php if($typetahapan[$i]->data_type=='varchar') echo 'text'; else echo 'number'; ?>" class="form-control input-mask" name="input{{ $count_input }}" required>
+                                <input type="hidden" name="count_input[]" value="<?php echo $count_input++ ?>">
                                 <br>
-                                <br>
-                            @endforeach
-                            <?php 
-                                $nametahapan = Schema::getColumnListing($id_survey.'-'.$tahapan->nama_tahapan);
-                                $counttahapan = count($nametahapan);
-                                $typetahapan = DB::select("select data_type from information_schema.columns where table_name='$id_survey-$tahapan->nama_tahapan'");
-                                $count_input=1;
-                                $count=DB::table('wilayah')->where('id_survey', $id_survey)->get();
-                                for($i=count($count);$i<$counttahapan-5;$i++){ ?>
-                                    <p class="f-500 m-b-15 c-black">{{ $nametahapan[$i] }}</p>
-                                    <input type="<?php if($typetahapan[$i]->data_type=='varchar') echo 'text'; else echo 'number'; ?>" class="form-control input-mask" name="input{{ $count_input }}" required>
-                                    <input type="hidden" name="count_input[]" value="<?php echo $count_input++ ?>">
-                                    <br>
-                            <?php      
-                                }
-                            ?>  
-                            <button class="btn btn-primary">Simpan</button>       
-                        </div>   
-                        </form>
-                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-                        <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambah/file') }}" enctype="multipart/form-data">
-                         {!! csrf_field() !!}
-                         <div class="col-sm-6 m-b-20">
-                            <p>Input data dengan file excel (.xlsx)</p>
-
-                            <div class="fileinput fileinput-new" data-provides="fileinput">
-                                <span class="btn btn-primary btn-file m-r-10">
-                                    <span class="fileinput-new">Select file</span>
-                                    <span class="fileinput-exists">Change</span>
-                                    <input type="file" name="data">
-                                </span>
-                                <span class="fileinput-filename"></span>
-                                <a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Simpan</button>  
-                         </div>
-                        </form>
+                            <?php  }
+                        ?> 
+                        @if ($interval->format('%a') > 0)
+                          @if ( $interval->format('%R') == "+" )
+                            <a class="example2-1 btn btn-danger">Simpan</a>
+                          @elseif ( $interval->format('%R') == "-" )
+                            <button class="btn btn-primary">Simpan</button> 
+                          @endif
+                        @else ($interval->format('%a') == 0)
+                           <button class="btn btn-primary">Simpan</button> 
+                        @endif     
                     </div>   
-                </div>    
+                  </form>
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                  <form class="form-horizontal" role="form" method="post" action="{{ url($id_survey.'/'.$id_tahapan.'/input/tambah/file') }}" enctype="multipart/form-data">
+                   {!! csrf_field() !!}
+                   <div class="col-sm-6 m-b-20">
+                      <p>Input data dengan file excel (.xlsx)</p>
+
+                      <div class="fileinput fileinput-new" data-provides="fileinput">
+                          <span class="btn btn-primary btn-file m-r-10">
+                              <span class="fileinput-new">Select file</span>
+                              <span class="fileinput-exists">Change</span>
+                              <input type="file" name="data">
+                          </span>
+                          <span class="fileinput-filename"></span>
+                          <a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>
+                      </div>
+                      @if ($interval->format('%a') > 0)
+                        @if ( $interval->format('%R') == "+" )
+                          <a class="example2-1 btn btn-danger">Simpan</a>
+                        @elseif ( $interval->format('%R') == "-" )
+                          <button type="submit" class="btn btn-primary">Simpan</button>  
+                        @endif
+                      @else ($interval->format('%a') == 0)
+                         <button type="submit" class="btn btn-primary">Simpan</button>  
+                      @endif     
+                   </div>
+                  </form>
+                </div>   
+              </div>    
             </div>  
             @endif  
 
@@ -464,21 +506,35 @@ div.box {
                                   $ambilkolom = Schema::getColumnListing($id_survey.'-'.$tahapan -> nama_tahapan);
                                   $count = count($ambilkolom);
                               ?>
-                                      <tr>
+                              @if($count==7)
+                                  <tr>
                                       <?php for($i=0;$i<$count;$i++) { ?>
                                           <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
                                       <?php } ?>
+                                      <th>Status</th>
+                                  </tr>
+                              @endif
+
+                              @if($count==8)
+                                      <tr>
+                                      <?php for($i=0;$i<6;$i++) { ?>
+                                          <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
+                                      <?php } ?>
                                           <th>Status</th>
+                                      <?php for($i=6;$i<$count;$i++) { ?>
+                                          <th data-column-id="id" data-type="numeric">{{ $ambilkolom[$i] }}</th>
+                                      <?php } ?>
                                       </tr>
+                              @endif
                           </thead>
                           <tbody>
                               <?php $i=0; ?>
                               @foreach($ambildata as $f_ambildata)
                                   <tr>
-                                  <?php for($i=0;$i<$count;$i++) { ?> 
+                                  @if($count==7) <!-- Jika Cakupan Wilayah = Provinsi -->
+                                      <?php for($i=0;$i<$count;$i++) { ?> 
                                       <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
-                                  <?php } ?>
-                                  @if($count==7)
+                                      <?php } ?>
                                       @if($f_ambildata -> $ambilkolom[1] == $f_ambildata -> $ambilkolom[2]) 
                                       <td><span class="btn btn-success">Selesai</span></td>
                                       @endif
@@ -494,7 +550,10 @@ div.box {
                                       <td><span class="btn btn-danger">Melebihi</span></td>
                                       @endif
                                   @endif
-                                  @if($count==8)
+                                  @if($count==8) <!-- Jika Cakupan Wilayah = Kabkot -->
+                                      <?php for($i=0;$i<6;$i++) { ?> 
+                                      <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
+                                      <?php } ?>
                                       @if($f_ambildata -> $ambilkolom[2] == $f_ambildata -> $ambilkolom[3]) 
                                       <td><span class="btn btn-success">Selesai</span></td>
                                       @endif
@@ -509,8 +568,14 @@ div.box {
                                       @if($f_ambildata -> $ambilkolom[2] > $f_ambildata -> $ambilkolom[3]) 
                                       <td><span class="btn btn-danger">Melebihi</span></td>
                                       @endif
+                                      <?php for($i=6;$i<$count;$i++) { ?> 
+                                      <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
+                                      <?php } ?>
                                   @endif
-                                  @if($count==9)
+                                  @if($count==9) <!-- Jika Cakupan Wilayah = Desa -->
+                                      <?php for($i=0;$i<7;$i++) { ?> 
+                                      <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
+                                      <?php } ?>
                                       @if($f_ambildata -> $ambilkolom[3] == $f_ambildata -> $ambilkolom[4]) 
                                       <td><span class="btn btn-success">Selesai</span></td>
                                       @endif
@@ -524,7 +589,10 @@ div.box {
                                       @endif
                                       @if($f_ambildata -> $ambilkolom[3] > $f_ambildata -> $ambilkolom[4]) 
                                       <td><span class="btn btn-danger">Melebihi</span></td>
-                                      @endif                                    
+                                      @endif
+                                      <?php for($i=7;$i<$count;$i++) { ?> 
+                                      <td>{{ $f_ambildata -> $ambilkolom[$i] }}</td>
+                                      <?php } ?>                                    
                                   @endif
                                   </tr>
                               @endforeach    
@@ -540,10 +608,10 @@ div.box {
 
 @section('js')
         <!-- Javascript Libraries -->
-        <script src="{{asset('assets/js/jquery.chained.min.js')}}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery.chained.min.js') }}"></script>
+        <!--<script src="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/Waves/dist/waves.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script>
+        <script src="{{ asset('assets/vendors/bootstrap-growl/bootstrap-growl.min.js') }}"></script> -->
         <script src="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.js') }}"></script>
         <!-- Datatables -->
         <script src="{{ asset('assets/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
@@ -554,22 +622,22 @@ div.box {
         <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+        <!-- <script src="{{ asset('assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script> -->
         <script src="{{ asset('assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
         <script src="{{ asset('assets/vendors/datatables.net-scroller/js/datatables.scroller.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
+        <!-- <script src="{{ asset('assets/vendors/bower_components/moment/min/moment.min.js') }}"></script> -->
         <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery-confirm.js') }}"></script>
 
-        <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
+        <!--<script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot.curvedlines/curvedLines.js') }}"></script>
         <script src="{{ asset('assets/vendors/sparklines/jquery.sparkline.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
-        <script src="{{ asset('assets/js/flot-charts/line-chart.js') }}"></script>
+        <script src="{{ asset('assets/js/flot-charts/line-chart.js') }}"></script> -->
+        
    <script type="text/javascript">
       $("#Kabkot").chained("#Provinsi");
    </script>
@@ -647,5 +715,17 @@ div.box {
         e.preventDefault();
       });
     });
+    </script>
+    <script type="text/javascript">
+        $('.example2-1').on('click', function () {
+          $.alert({
+              animation: 'rotateYR',
+              closeAnimation: 'rotateYR',
+              theme: 'white',
+              icon: 'fa fa-spinner fa-spin',
+              title: 'Ops, maaf :(',
+              content: 'Batas deadline sudah lewat'
+          });
+        });
     </script>
 @endsection

@@ -93,7 +93,7 @@
                     @endif
                     <li class="sub-menu">
                         <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
-                        <ul>
+   2                    <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
                                 <ul>
@@ -124,7 +124,7 @@
                     </ol>
                     <div class="card">
                        <div class="card-header">
-                            <h2>Dashboard <h3>Monitoring Survey {{$survey2->id_survey}}</h3></h2>
+                            <h2>Dashboard <h3>Monitoring {{$survey2->nama_survey}}</h3></h2>
 
                             <ul class="actions">                         
                                 <div class="btn-group">
@@ -157,14 +157,44 @@
                                 <a href="{{ url('survey/'.$id_survey.'/create') }}" class="btn palette-Teal bg btn-icon"><i class="zmdi zmdi-plus"></i></a>
                             </ul>    
                         </div>
+
+                        <?php
+                          $ambildata = DB::table($id_survey.'-'.$tahapan -> nama_tahapan) -> get();
+                          $ambilkolom = Schema::getColumnListing($id_survey.'-'.$tahapan -> nama_tahapan);
+                          $count = count($ambilkolom);
+                        ?>
+
+                        <?php $i=0;$j=0; ?>
+                            @foreach($ambildata as $f_ambildata)
+                                @if($count==7) <!-- Jika Cakupan Wilayah = Provinsi -->
+                                <?php 
+                                    $i+=$f_ambildata -> $ambilkolom[1];
+                                    $j+=$f_ambildata -> $ambilkolom[2];
+                                ?>
+                                @endif
+
+                                @if($count==8) <!-- Jika Cakupan Wilayah = Kabkot -->
+                                <?php 
+                                    $i+=$f_ambildata -> $ambilkolom[2];
+                                    $j+=$f_ambildata -> $ambilkolom[3];
+                                ?>
+                                @endif
+                                
+                                @if($count==9) <!-- Jika Cakupan Wilayah = Desa -->
+                                <?php 
+                                    $i+=$f_ambildata -> $ambilkolom[3];
+                                    $j+=$f_ambildata -> $ambilkolom[4];
+                                ?>
+                                @endif
+                            @endforeach
                         
                         <div class="card-body card-padding">
                             <div class="pm-body clearfix">
                             @foreach($tahapanSurvey2 as $tahapan)
                                 <div class="col-xs-3">
                                     <p>{{$tahapan->nama_tahapan}}</p>
-                                    <div class="c100 p0">
-                                        <span>0%</span>
+                                    <div class="c100 p{{round(($i/$j)*100)}}">
+                                        <span>{{ round(($i/$j)*100) }}% </span>
                                         <div class="slice">
                                             <div class="bar"></div>
                                             <div class="fill"></div>
@@ -175,22 +205,38 @@
                              </div>
                         </div>
                     </div>
-
+                    <?php
+                        date_default_timezone_set("Asia/Jakarta"); 
+                        $now = date('Y-m-d'); //Returns IST  
+                    ?>
                     <div class="card">
                         <div class="card-header">
                           <h2>Batas Deadline</h2>
                           <br>
                           <h2>Tiap - tiap tahapan </h2>
-                        </div>
-
+                        </div> 
                         <div class="card-body card-padding">
                           <div class="pm-body clearfix">
                             @foreach($tahapanSurvey2 as $tahapan)
                             <div class="col-xs-3">
                                 <p>{{$tahapan->nama_tahapan}}</p>
                                 <img src="{{ asset('assets/img/clock.png') }}" width="100" height="100" alt="">
-                                <h3><p>? Hari</p></h3>
-                                <p>{{$tahapan->tgl_selesai}}</p>
+                                <?php
+                                    $tglskrg = date_create($now);
+                                    $tgldeadline = date_create($tahapan->tgl_selesai);
+                                    $interval = date_diff($tgldeadline, $tglskrg);
+                                ?>
+                                @if ($interval->format('%a') > 0)
+                                    @if ( $interval->format('%R') == "+" )
+                                        <h3><p><font color="red">Closed! {{ $interval->format('H%R%a') }}</font></p></h3>
+                                    @elseif ( $interval->format('%R') == "-" )
+                                        <h3><p><font color="blue">Ongoing {{ $interval->format('H%R%a') }}</font></p></h3>    
+                                    @endif  
+                                @else ($interval->format('%a') == 0)
+                                    <h3><p><font color="orange">Deadline!</font></p></h3>
+                                @endif
+                                <p>Deadline : {{$tahapan->tgl_selesai}}</p>
+                                <p>Now : {{ $now }}</p>
                             </div>
                             @endforeach
                           </div>
@@ -203,22 +249,22 @@
 
 @section('js')
         <!-- Javascript Libraries -->
-        <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script>
+        <!-- <script src="{{ asset('assets/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js') }}"></script>
+        <script src="{{ asset('assets/vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js') }}"></script> -->
         <script src="{{ asset('assets/vendors/bower_components/salvattore/dist/salvattore.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
+        <!--<script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.resize.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot/jquery.flot.pie.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/flot.curvedlines/curvedLines.js') }}"></script>                         
-        <script src="{{ asset('assets/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js') }}"></script>
+        <script src="{{ asset('assets/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js') }}"></script> -->
 
         <!-- Charts - Please read the read-me.txt inside the js folder-->
-        <script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
+        <!--<script src="{{ asset('assets/js/flot-charts/curved-line-chart.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/line-chart.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/bar-chart.js') }}"></script>
         <script src="{{ asset('assets/js/flot-charts/dynamic-chart.js') }}"></script>
-        <script src="{{ asset('assets/js/flot-charts/pie-chart.js') }}"></script>
+        <script src="{{ asset('assets/js/flot-charts/pie-chart.js') }}"></script> -->
         
 @endsection

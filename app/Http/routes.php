@@ -13,12 +13,12 @@
 
  
 //Login
-Route::get('/','LoginController@index');
+Route::get('/','LoginController@index'); 
 Route::get('login', 'LoginController@formLogin');
 Route::post('login', 'LoginController@login');
 
 //Logout
-Route::get('logout', 'LoginController@logout');
+Route::get('logout/{id_user}', 'LoginController@logout');
 
 //Home
 Route::get('home', 'HomeController@index'); 
