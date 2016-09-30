@@ -19,7 +19,7 @@ class UserController extends Controller
 {
     public function index() {
         $user = DB::table('users')->where('username', session::get('username'))->first();
-        $users = DB::table('users')->orderBy('id_user','desc')->paginate(10);
+        $users = DB::table('users')->orderBy('id_user','desc')->get();
         $level = $user->level_user;
         $survey=DB::table('survey')->get();
 
@@ -31,7 +31,7 @@ class UserController extends Controller
         } 
     }
 
-    public function create(Request $request) {
+    public function create(Request $request) { 
 
       // $rules = array(
       //   'name' => 'required|max:255',

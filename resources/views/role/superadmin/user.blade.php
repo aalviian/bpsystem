@@ -1,82 +1,83 @@
 @extends('layouts.master')
-    @section('title')
-        Dashboard
-    @endsection
+@section('title')
+    Dashboard
+@endsection
 
-    @section('css')
-        <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
-    @endsection
+@section('css')
+    <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendors/bootgrid/jquery.bootgrid.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendors/bower_components/google-material-color/dist/palette.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+@endsection
 
-    @section('leftNavbar')  
-        <aside id="s-main-menu" class="sidebar">
-                <div class="smm-header">
-                    <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
-                </div> 
+@section('leftNavbar')
+    <aside id="s-main-menu" class="sidebar">
+            <div class="smm-header">
+                <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
+            </div>
+ 
+            <ul class="smm-alerts">
+                <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+                    <i class="zmdi zmdi-email"></i>
+                </li>
+                <li data-user-alert="sua-notifications" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+                    <i class="zmdi zmdi-notifications"></i>
+                </li>
+                <li data-user-alert="sua-tasks" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+                    <i class="zmdi zmdi-view-list-alt"></i>
+                </li>
+            </ul>
 
-                <ul class="smm-alerts">
-                    <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
-                        <i class="zmdi zmdi-email"></i>
-                    </li>
-                    <li data-user-alert="sua-notifications" data-ma-action="sidebar-open" data-ma-target="user-alerts">
-                        <i class="zmdi zmdi-notifications"></i>
-                    </li>
-                    <li data-user-alert="sua-tasks" data-ma-action="sidebar-open" data-ma-target="user-alerts">
-                        <i class="zmdi zmdi-view-list-alt"></i>
-                    </li>
-                </ul>
+            <ul class="main-menu">
+                <li>
+                    <a href="{{ url('home') }}"><i class="zmdi zmdi-home"></i> Beranda</a>
+                </li>
 
-                <ul class="main-menu">
-                    <li>
-                        <a href="{{ url('home') }}"><i class="zmdi zmdi-home"></i> Home</a>
-                    </li>
-
-                    <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
-                        <ul>
-                            <li>
-                                <a href="{{ url('createsurvey') }}"> Create new</a>
-                            </li>
-                            @foreach($survey as $f_survey)
-                                <li><a href="{{ url('survey/'.$f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
-                            @endforeach
-                        </ul>
-                    </li>
-                    @if($user -> level_user == "1")
-                    <li class="sub-menu">
-                        <a href="{{ url('/user') }}" data-ma-action="submenu-toggle"><i class="zmdi zmdi-home"></i> Users</a>
-                    </li>
-                    @endif
-                    <li class="sub-menu">
-                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
-                        <ul>
-                            <li class="sub-menu">
-                                <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
-                                <ul>
-                                    <li><a href="alternative-header.html">Pemutakhiran</a></li>
-                                    <li><a href="colored-header.html">Pencacahan</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </aside>
-    @endsection
+                <li class="sub-menu">
+                    <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
+                    <ul>
+                        <li>
+                            <a href="{{ url('create') }}"> Buat Baru</a>
+                        </li>
+                        @foreach($survey as $f_survey)
+                            <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
+                @if($user -> level_user == "1")
+                <li>
+                    <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Pengguna</a>
+                </li>
+                @endif
+                <li class="sub-menu">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> Riwayat</a>
+                    <ul>
+                        <li class="sub-menu">
+                            <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
+                            <ul>
+                                <li><a href="alternative-header.html">Pemutakhiran</a></li>
+                                <li><a href="colored-header.html">Pencacahan</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+    </aside>
+@endsection
 
 @section('content')
 
 <section id="content">
             <div class="container">
                 <ol class="breadcrumb" style="margin-bottom: 5px;">
-                    <li>User Create</li>
+                    <li><a href="{{ url('home') }}">Beranda</a></li>
+                    <li>Administrasi</li>
                 </ol>
                     <div class="card">
                         <div class="card-header">
-                            <h2>Input Groups</h2>
+                            <h2>Input Data Pengguna Baru</h2>
                             <p>
                                 @if (count($errors) > 0)
                                     <div class="alert alert-danger">
@@ -97,7 +98,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
                                         <div class="fg-line">
-                                                <input type="text" id="name0" name="name" class="form-control" placeholder="Full Name" required>
+                                                <input type="text" id="name0" name="name" class="form-control" placeholder="Nama Lengkap" required>
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +136,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h2>List User</h2>
+                            <h2>Daftar Pengguna</h2>
                             <br>
                             @if(Session::has('success_message'))
                                 <div class="alert alert-success">
@@ -154,7 +155,7 @@
                                             <th>Nama</th>
                                             <th>Username</th>
                                             <th>NIP</th>
-                                            <th>Action</th>
+                                            <th>Tindakan</th>
                                             
                                         </tr>
                                     </thead>
@@ -167,9 +168,9 @@
                                             <td>{{ $f_users -> username }}</td>
                                             <td>{{ $f_users -> nip_user }}</td>
                                             <td>
-                                                <a  onclick="openmodaledit('<?php echo $f_users->id_user  ?>','<?php echo $f_users->name  ?>','<?php echo $f_users->username  ?>','<?php echo $f_users->nip_user ?>')"  class="btn palette-Indigo bg">Edit</a>
+                                                <a  onclick="openmodaledit('<?php echo $f_users->id_user  ?>','<?php echo $f_users->name  ?>','<?php echo $f_users->username  ?>','<?php echo $f_users->nip_user ?>')"  class="btn palette-Indigo bg">Ubah</a>
                                                 
-                                                <a onclick="openmodaldelete('<?php echo $f_users->id_user  ?>','<?php echo $f_users->name  ?>','<?php echo $f_users->username  ?>')" class="btn palette-Red bg">Delete</a>
+                                                <a onclick="openmodaldelete('<?php echo $f_users->id_user  ?>','<?php echo $f_users->name  ?>','<?php echo $f_users->username  ?>')" class="btn palette-Red bg">Hapus</a>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -180,7 +181,7 @@
                     </div>
 
             <!--Edit Modal -->
-            <div class="modal fade" id="editmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"     aria-hidden="true">
+            <div class="modal fade" id="editmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"     aria-hidden="true"> 
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -214,7 +215,7 @@
                          
                     <div class="modal-footer">
                         <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
-                        <button onclick="edituser()" class="btn btn-success pull-rigth">Tambahkan</button>
+                        <button onclick="edituser()" class="btn btn-success pull-rigth">Ubah</button>
                     </div>
                   </div>
                 </div>

@@ -35,10 +35,11 @@ class LoginController extends Controller
         {   
             $id_user = $cek -> id_user;
             $status = 1;
-            $ambiltgl =  new DateTime();
-            DB::table('loguser')->insert(['id_users'=>$id_user, 'status'=>$status, 'waktu_login'=>$ambiltgl]);
+            date_default_timezone_set("Asia/Jakarta"); 
+            $now = date('Y-m-d H:i:s');
+            DB::table('loguser')->insert(['id_users'=>$id_user, 'status'=>$status, 'waktu_login'=>$now]);
             session::put('username', $cek->username);
-            Alert::success('Welcome '.$cek->name, 'Login Success')->persistent("Oke");
+            Alert::success('Selamat Datang '.$cek->name, 'Login Berhasil')->persistent("Oke");
             return redirect('home');
         }
         else {
@@ -49,12 +50,12 @@ class LoginController extends Controller
 
     //LOGOUT
     public function logout($id_user){
+        date_default_timezone_set("Asia/Jakarta"); 
         $status = 0;
-        $ambiltgl2 =  new DateTime();
-        $tgl_skrg = $ambiltgl2->format('Y-m-d H:i:s');
+        $now = date('Y-m-d H:i:s');
         $loguser=DB::table('loguser')->where('id_users', $id_user)->where('waktu_logout','0000-00-00 00:00:00')->first();
 
-        $updatestatus = DB::table('loguser')->where('id_users',$id_user)->where('id_log', $loguser->id_log)->update(['status'=>$status, 'waktu_logout'=>$tgl_skrg]);
+        $updatestatus = DB::table('loguser')->where('id_users',$id_user)->where('id_log', $loguser->id_log)->update(['status'=>$status, 'waktu_logout'=>$now]);
         if($updatestatus) {
             session::forget('username');
             return redirect('login');

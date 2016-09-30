@@ -20,16 +20,17 @@ class InputController extends Controller
         if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
             $user=DB::table('users')->where('username', session::get('username')) ->first();
             $level=$user->level_user;
-
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapan = DB::table('tahapansurvey') ->where('id_tahapan',$id_tahapan)->where('id_survey', $id_survey)->first(); 
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
             $daftarWilayah = DB::table('wilayah')->where('id_survey',$id_survey)->get();
             return view('role.superadmin.inputprogress',compact('user','id_survey','id_tahapan','survey','survey2','tahapan','tahapanSurvey2','daftarWilayah','level')); 
-        } 
+        } else { 
+            return redirect('login');
+        }
 
-        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        $users=DB::table($id_survey.'-hakakses')->where('id_users', Session::get('username'))->first();
         if($users){
             $user=DB::table('users') -> where('username', Session::get('username')) -> first();
             $level=$users->hakakses;
@@ -54,7 +55,7 @@ class InputController extends Controller
     }
 
     public function tambah($id_survey, $id_tahapan) {
-        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        $users=DB::table($id_survey.'-hakakses')->where('id_users', Session::get('username'))->first();
         if($users) {
             $level=$users->hakakses;
                 if($level=="Operator" || $level="Admin") {

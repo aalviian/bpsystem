@@ -23,15 +23,11 @@ Route::get('logout/{id_user}', 'LoginController@logout');
 //Home
 Route::get('home', 'HomeController@index'); 
 
-//profile
-Route::get('profile/{username}', 'ProfileController@index');
-
 //Administrasi
 Route::get('{id_survey}/administrasi', 'AdministrasiController@index');
 Route::post('{id_survey}/administrasi/tambah', 'AdministrasiController@postAdministrasi');
 Route::get('{id_survey}/administrasi/{user_hakakses}/edit', 'AdministrasiController@editAdministrasi');
 Route::post('{id_survey}/administrasi/{user_hakakses}/edit', 'AdministrasiController@saveAdministrasi');
-Route::get('{id_survey}/administrasi/tableadministrasi', 'AdministrasiController@tableadministrasi');
 
 //user
 Route::get('user', 'UserController@index');
@@ -41,12 +37,12 @@ Route::get('user/delete/{id_user}', 'UserController@delete');
 Route::get('user/tableuser', 'UserController@tableuser');
 
 //Survey
-Route::get('create', 'SurveyController@index');
+Route::get('createsurvey', 'SurveyController@index');
 Route::post('createsurvey', 'SurveyController@create');
-Route::get('{id_survey}', 'SurveyController@survey');
-Route::get('{id_survey}/edit', 'SurveyController@formEdit');
-Route::post('{id_survey}/edit', 'SurveyController@editSurvey');
-Route::get('{id_survey}/create', 'TahapanController@viewcreatetahapan');
+Route::get('survey/{id_survey}', 'SurveyController@survey');
+Route::get('survey/{id_survey}/edit', 'SurveyController@formEdit');
+Route::post('survey/{id_survey}/edit', 'SurveyController@editSurvey');
+Route::get('survey/{id_survey}/create', 'TahapanController@viewcreatetahapan');
 Route::post('survey/{id_survey}/create', 'TahapanController@viewcreatetahapan');
 Route::get('{id_survey}/{id_tahapan}', 'TahapanController@viewTahapan');
 
@@ -54,3 +50,4 @@ Route::get('{id_survey}/{id_tahapan}', 'TahapanController@viewTahapan');
 Route::get('{id_survey}/{id_tahapan}/input', 'InputController@index');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah', 'InputController@tambah');
 Route::post('{id_survey}/{id_Tahapan}/input/tambah/file', 'InputController@tambahdgnfile');
+

@@ -3,7 +3,7 @@
         Administrasi | Superadmin
     @endsection
     
-    @section('css')
+    @section('css') 
         <link href="{{ asset('assets/css/jquery-confirm.css') }}" rel="stylesheet"> 
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="{{ asset('assets/vendors/bower_components/animate.css/animate.min.css') }}" rel="stylesheet">
@@ -42,14 +42,14 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Home</a>
+                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Beranda</a>
                     </li>
 
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('/createsurvey') }}"> Create new</a>
+                                <a href="{{ url('/create') }}"> Buat Baru</a>
                             </li>
                             @foreach($survey as $survei)
                                 <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
@@ -70,16 +70,16 @@
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey2->id_survey }}</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administrasi {{ $survey2->id_survey }}</a>
                     </li>
                     @if($user -> level_user == "1")
                     <li>
-                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Pengguna</a>
                     </li>
                     @endif
                     <li class="sub-menu">
-                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
-                        <ul>
+                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> Riwayat</a>
+                       <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
                                 <ul>
@@ -104,16 +104,16 @@
         <section id="content">
             <div class="container">
                 <ol class="breadcrumb" style="margin-bottom: 5px;">
-                    <li><a href="{{ url('home') }}">Home</a></li>
+                    <li><a href="{{ url('home') }}">Beranda</a></li>
                     <li><a href="{{ url($id_survey) }}">{{ $id_survey }}</a></li>
                     <li>Administrasi</li>
                 </ol>
                 <div class="card">
                     <div class="card-header">
-                        <h2>Remember :<small>
-                        1. Define your survey's name <br>
-                        2. Assign a number of phase <br>
-                        3. Determine an admin of survey Extend form controls by adding text or buttons before, after, or on both sides of any text-based inputs.</small></h2>
+                        <h2>Ketentuan :<small>
+                        1. Pengisian pengguna hanya dilakukan oleh superadmin <br>
+                        2. Nama dan Username hanya bisa diubah oleh superadmin <br>
+                        3. Segera hubungi superadmin, jika hak akses tidak sesuai</small></h2>
                         <br>
                         <div class="dropdown">
                             <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
@@ -164,12 +164,12 @@
                                             </div>
                                             <div class="col-md-4"></div>
                                         </div>   
-                       @foreach($username as $f_username)
+                        <!--@foreach($username as $f_username)
                             <input type="hidden" value="{{ $f_username -> username }}">
-                       @endforeach
-                       <?php
-                        $countusernam= count($username);
-                       ?>
+                        @endforeach
+                        <?php
+                            $countusername= count($username);
+                        ?> -->
                         <table id="data-table" class="table table-striped table-vmiddle">
                             <thead>
                                 <tr>
@@ -189,7 +189,7 @@
                                 <?php
                                 
                                 $user = DB::table('users')
-                                    ->where('username', $hakakses->id_user)
+                                    ->where('username', $hakakses->id_users)
                                     ->first();
                                 $no=1;
                                 ?>       
@@ -201,10 +201,10 @@
                                     <td>{{ $hakakses -> hakakses }}</td>
                                     @if($level=="Admin" || Session::get('username')=="alvian" || Session::get('username')=="aneksa")
                                     <td>
-                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Edit</a>
+                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/edit') }}" type="button" class="btn palette-Indigo bg">Ubah</a>
                                         <!-- <a  onclick="openmodaledit('<?php echo $user->id_user  ?>','<?php echo $user->name  ?>','<?php echo $user->username  ?>','<?php echo $user->nip_user ?>','<?php echo $hakakses->hakakses ?>')"  class="btn palette-Indigo bg">Edit</a> -->
                                         
-                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn palette-Red bg">Delete</a>
+                                        <a href="{{ url($id_survey.'/administrasi/'.$user->username.'/delete' ) }}" type="button" class="btn palette-Red bg">Hapus</a>
                                     </td>
                                     @endif
                                 </tr>
@@ -243,21 +243,20 @@
 
                             <div class="form-group">
                                 <label class="control-label" for="nip">Username</label>
-                                <select class="selectpicker" multiple data-live-search="true" name="username">
-
+                                <select class="selectpicker" name="username">
+                                    @foreach($username as $f_username)
+                                        <option value="{{ $f_username -> username }}">{{ $f_username -> username }}</option>
+                                    @endforeach
                                 </select>
                             </div>              
                             <div class="form-group">
                                 <label class="control-label" for="hakakses">Hak Akses</label>
-                                
                                 <select class="selectpicker" data-live-search="true" name="hakakses">
                                     <option value="Admin">Admin</option>
                                     <option value="Supervisor">Supervisor</option>
                                     <option value="Operator">Operator</option>
-                                </select>                
-                                           
+                                </select>                      
                             </div>
-                                    
                             <br><br>
                         </div>
                              
@@ -307,7 +306,7 @@
                          
                     <div class="modal-footer">
                         <button data-dismiss="modal" class="btn btn-default pull-rigth">Batal</button>
-                        <button onclick="edituser()" class="btn btn-success pull-rigth">Tambahkan</button>
+                        <button onclick="edituser()" class="btn btn-success pull-rigth">Ubah</button>
                     </div>
                   </div>
                 </div>

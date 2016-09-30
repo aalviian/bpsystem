@@ -18,15 +18,19 @@ class TahapanController extends Controller
     public function viewTahapan($id_survey, $id_tahapan){ 
         if(Session::get('username')=="alvian" || Session::get('username')=="aneksa") {
         	$user = DB::table('users')->where('username', session::get('username'))->first();
-            $level=$user->level_user;
+            $level=$user->level_user; 
  
             $survey = DB::table('survey')->get();
             $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
             $tahapan = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> where('id_tahapan', $id_tahapan) -> first();
-            return view('role.superadmin.tahapansurvey', compact('user','id_survey','id_tahapan','survey', 'survey2', 'tahapanSurvey2','tahapan'));
+            $ambildata = DB::table($id_survey.'-'.$tahapan->nama_tahapan) -> get();
+            $ambilprovinsi = DB::table($id_survey.'-provinsi') ->get();
+            return view('role.superadmin.tahapansurvey', compact('user','id_survey','id_tahapan','survey', 'survey2', 'tahapanSurvey2','tahapan','ambildata','ambilprovinsi'));
+        } else { 
+            return redirect('login');
         }
-        $users=DB::table($id_survey.'-hakakses')->where('id_user', Session::get('username'))->first();
+        $users=DB::table($id_survey.'-hakakses')->where('id_users', Session::get('username'))->first();
         if($users) { 
             $user=DB::table('users') -> where('username', Session::get('username')) -> first();
             $level=$users->hakakses;
@@ -114,8 +118,8 @@ class TahapanController extends Controller
 
         Schema::create($id_survey.'-hakakses', function(Blueprint $table){
 
-            $table->string('id_user');
-            $row_hakakses[] = 'id_user';
+            $table->string('id_users');
+            $row_hakakses[] = 'id_users';
             $table->string('hakakses');
             $row_hakakses[] = 'hakakses';
             $table->primary($row_hakakses);
@@ -130,8 +134,8 @@ class TahapanController extends Controller
                 $table->string('id_'.$wil,$length);
                 $row_hakakses[] = 'id_'.$wil;
             }
-            $table->string('id_user');
-            $row_hakakses[] = 'id_user';
+            $table->string('id_users');
+            $row_hakakses[] = 'id_users';
             $table->primary($row_hakakses);
             $table->dateTime('tgl_create');
             $table->dateTime('tgl_update');

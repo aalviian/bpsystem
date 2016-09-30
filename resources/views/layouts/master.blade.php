@@ -25,7 +25,6 @@
         <!-- CSS -->
         <link href="{{ asset('assets/css/app.min.1.css') }}" rel="stylesheet">
         <link href="{{ asset('assets/css/app.min.2.css') }}" rel="stylesheet">
-        
     </head> 
     @if(session::get('username'))
     <input type="hidden" id="name" value="{{ $user->name }}">
@@ -37,7 +36,6 @@
                     Monitor Survey
                     <small>Hi, {{ $user->name }}</small>
                 </a>
-                
                 <div class="menu-collapse" data-ma-action="sidebar-open" data-ma-target="main-menu">
                     <div class="mc-wrap">
                         <div class="mcw-line top palette-White bg"></div>
@@ -66,13 +64,13 @@
                         @foreach($survey as $f_survey)
                         <li>
                             <a href="">
-                                <?php
-                                    $a=array("Red","Green","Blue","yellow","brown");
-                                    $color=$a[$i];
-                                    $i++; 
-                                    $palette = "palette-".$color."-400 bg zmdi zmdi-folder-outline";
-                                    ?>
-                                       <a href="{{ url('survey/'.$f_survey->id_survey) }}"> <i class="{{ $palette }}"></i><small>{{ $f_survey -> id_survey}}</small></a>
+                            <?php
+                                $a=array("Red","Green","Blue","yellow","brown");
+                                $color=$a[$i];
+                                $i++; 
+                                $palette = "palette-".$color."-400 bg zmdi zmdi-folder-outline";
+                            ?>
+                            <a href="{{ url('survey/'.$f_survey->id_survey) }}"> <i class="{{ $palette }}"></i><small>{{ $f_survey -> id_survey}}</small></a>
                             </a>
                         </li>
                         @endforeach
@@ -80,24 +78,8 @@
                 </li>
                 <li class="dropdown hidden-xs">
                     <a data-toggle="dropdown" href=""><i class="hm-icon zmdi zmdi-more-vert"></i></a>
-                    <ul class="dropdown-menu dm-icon pull-right">
-                        <li class="hidden-xs">
-                            <a data-action="fullscreen" href=""><i class="zmdi zmdi-fullscreen"></i> Toggle Fullscreen</a>
-                        </li>
-                        <li>
-                            <a data-action="clear-localstorage" href=""><i class="zmdi zmdi-delete"></i> Clear Local Storage</a>
-                        </li>
-                        <li>
-                            <a href=""><i class="zmdi zmdi-face"></i> Privacy Settings</a>
-                        </li>
-                        <li>
-                            <a href=""><i class="zmdi zmdi-settings"></i> Other Settings</a>
-                        </li>
-                    </ul>
+                    <ul class="dropdown-menu dm-icon pull-right"></ul>
                 </li>
-                <li class="hm-alerts" data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
-                    <a href=""><i class="hm-icon zmdi zmdi-notifications"></i></a>
-                </li> 
                 <li class="dropdown hm-profile">
                     <a data-toggle="dropdown" href="">
                         <img src="{{ asset('assets/img/profile-pics/1.jpg') }}" alt="">
@@ -105,245 +87,30 @@
                     
                     <ul class="dropdown-menu pull-right dm-icon">
                         <li>
-                            <a href="profile-about.html"><i class="zmdi zmdi-account"></i> View Profile</a>
+                            <a href="{{ url('profile/'.$user -> username) }}"><i class="zmdi zmdi-time-restore"></i> Profile</a>
                         </li>
                         <li>
-                            <a href=""><i class="zmdi zmdi-input-antenna"></i> Privacy Settings</a>
-                        </li>
-                        <li>
-                            <a href=""><i class="zmdi zmdi-settings"></i> Settings</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/logout/'.$user -> id_user) }}"><i class="zmdi zmdi-time-restore"></i> Logout</a>
+                            <a href="{{ url('/logout/'.$user -> id_user) }}"><i class="zmdi zmdi-time-restore"></i> Keluar</a>
                         </li>
                     </ul>
                 </li>
             </ul>
-            
-            <div class="media-body h-search">
-                <form class="p-relative">
-                    <input type="text" class="hs-input" placeholder="Search for people, files & reports">
-                    <i class="zmdi zmdi-search hs-reset" data-ma-action="search-clear"></i>
-                </form>
-            </div>
-            
         </header>
-
         <section id="main">
-
             @yield('leftNavbar')
-
-            <aside id="s-user-alerts" class="sidebar">
-                <ul class="tab-nav tn-justified tn-icon m-t-10" data-tab-color="teal">
-                    <li><a class="sua-messages" href="#sua-messages" data-toggle="tab"><i class="zmdi zmdi-email"></i></a></li>
-                    <li><a class="sua-notifications" href="#sua-notifications" data-toggle="tab"><i class="zmdi zmdi-notifications"></i></a></li>
-                    <li><a class="sua-tasks" href="#sua-tasks" data-toggle="tab"><i class="zmdi zmdi-view-list-alt"></i></a></li>
-                </ul>
-
-                <div class="tab-content">
-                    <div class="tab-pane fade" id="sua-messages">
-                        <ul class="sua-menu list-inline list-unstyled palette-Light-Blue bg">
-                            <li><a href=""><i class="zmdi zmdi-check-all"></i> Mark all</a></li>
-                            <li><a href=""><i class="zmdi zmdi-long-arrow-tab"></i> View all</a></li>
-                            <li><a href="" data-ma-action="sidebar-close"><i class="zmdi zmdi-close"></i> Close</a></li>
-                        </ul>
-
-                        <div class="list-group lg-alt c-overflow">
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/1.jpg" alt="">
-                                </div>
-
-                                <div class="media-body">
-                                    <div class="lgi-heading">David Villa Jacobs</div>
-                                    <small class="lgi-text">Sorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam mattis lobortis sapien non posuere</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/5.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Candice Barnes</div>
-                                    <small class="lgi-text">Quisque non tortor ultricies, posuere elit id, lacinia purus curabitur.</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/3.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Jeannette Lawson</div>
-                                    <small class="lgi-text">Donec congue tempus ligula, varius hendrerit mi hendrerit sit amet. Duis ac quam sit amet leo feugiat iaculis</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/4.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Darla Mckinney</div>
-                                    <small class="lgi-text">Duis tincidunt augue nec sem dignissim scelerisque. Vestibulum rhoncus sapien sed nulla aliquam lacinia</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/2.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Rudolph Perez</div>
-                                    <small class="lgi-text">Phasellus a ullamcorper lectus, sit amet viverra quam. In luctus tortor vel nulla pharetra bibendum</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <a href="" class="btn btn-float btn-danger m-btn">
-                            <i class="zmdi zmdi-plus"></i>
-                        </a>
-                    </div>
-                    <div class="tab-pane fade" id="sua-notifications">
-                        <ul class="sua-menu list-inline list-unstyled palette-Orange bg">
-                            <li><a href=""><i class="zmdi zmdi-volume-off"></i> Mute</a></li>
-                            <li><a href=""><i class="zmdi zmdi-long-arrow-tab"></i> View all</a></li>
-                            <li><a href="" data-ma-action="sidebar-close"><i class="zmdi zmdi-close"></i> Close</a></li>
-                        </ul>
-
-                        <div class="list-group lg-alt c-overflow">
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/1.jpg" alt="">
-                                </div>
-
-                                <div class="media-body">
-                                    <div class="lgi-heading">David Villa Jacobs</div>
-                                    <small class="lgi-text">Sorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam mattis lobortis sapien non posuere</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/5.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Candice Barnes</div>
-                                    <small class="lgi-text">Quisque non tortor ultricies, posuere elit id, lacinia purus curabitur.</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/3.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Jeannette Lawson</div>
-                                    <small class="lgi-text">Donec congue tempus ligula, varius hendrerit mi hendrerit sit amet. Duis ac quam sit amet leo feugiat iaculis</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/4.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Darla Mckinney</div>
-                                    <small class="lgi-text">Duis tincidunt augue nec sem dignissim scelerisque. Vestibulum rhoncus sapien sed nulla aliquam lacinia</small>
-                                </div>
-                            </a>
-
-                            <a href="" class="list-group-item media">
-                                <div class="pull-left">
-                                    <img class="avatar-img" src="img/profile-pics/2.jpg" alt="">
-                                </div>
-                                <div class="media-body">
-                                    <div class="lgi-heading">Rudolph Perez</div>
-                                    <small class="lgi-text">Phasellus a ullamcorper lectus, sit amet viverra quam. In luctus tortor vel nulla pharetra bibendum</small>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="sua-tasks">
-                        <ul class="sua-menu list-inline list-unstyled palette-Green-400 bg">
-                            <li><a href=""><i class="zmdi zmdi-time"></i> Archived</a></li>
-                            <li><a href=""><i class="zmdi zmdi-check-all"></i> Mark all</a></li>
-                            <li><a href="" data-ma-action="sidebar-close"><i class="zmdi zmdi-close"></i> Close</a></li>
-                        </ul>
-
-                        <div class="list-group lg-alt c-overflow">
-                            <div class="list-group-item">
-                                <div class="lgi-heading m-b-5">HTML5 Validation Report</div>
-
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%">
-                                        <span class="sr-only">95% Complete (success)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="lgi-heading m-b-5">Google Chrome Extension</div>
-
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                        <span class="sr-only">80% Complete (success)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="lgi-heading m-b-5">Social Intranet Projects</div>
-
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
-                                        <span class="sr-only">20% Complete</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="lgi-heading m-b-5">Bootstrap Admin Template</div>
-
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                        <span class="sr-only">60% Complete (warning)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="lgi-heading m-b-5">Youtube Client App</div>
-
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                        <span class="sr-only">80% Complete (danger)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a href="" class="btn btn-float btn-danger m-btn">
-                            <i class="zmdi zmdi-plus"></i>
-                        </a>
-                    </div>
-                </div>
-            </aside>
-
-
             @yield('content')
-
             <footer id="footer">
-                Copyright &copy; 2015 Material Admin
+                Copyright &copy; 2015 Badan Pusat Statistik
 
                 <ul class="f-menu">
-                    <li><a href="">Home</a></li>
-                    <li><a href="">Dashboard</a></li>
-                    <li><a href="">Reports</a></li>
-                    <li><a href="">Support</a></li>
-                    <li><a href="">Contact</a></li>
+                    <li><a href="">Beranda</a></li>
+                    <li><a href="">Survey</a></li>
+                    <li><a href="">Laporan</a></li>
+                    <li><a href="">Data</a></li>
+                    <li><a href="">Pengguna</a></li>
                 </ul>
             </footer>
-
         </section>
-
         <!-- Page Loader -->
         <div class="page-loader palette-Teal bg">
             <div class="preloader pl-xl pls-white">
@@ -352,52 +119,7 @@
                 </svg>
             </div>
         </div>
-        
-        <!-- Older IE warning message -->
-        <!--[if lt IE 9]>
-            <div class="ie-warning">
-                <h1 class="c-white">Warning!!</h1>
-                <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
-                <div class="iew-container">
-                    <ul class="iew-download">
-                        <li>
-                            <a href="http://www.google.com/chrome/">
-                                <img src="img/browsers/chrome.png" alt="">
-                                <div>Chrome</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.mozilla.org/en-US/firefox/new/">
-                                <img src="img/browsers/firefox.png" alt="">
-                                <div>Firefox</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://www.opera.com">
-                                <img src="img/browsers/opera.png" alt="">
-                                <div>Opera</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.apple.com/safari/">
-                                <img src="img/browsers/safari.png" alt="">
-                                <div>Safari</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
-                                <img src="img/browsers/ie.png" alt="">
-                                <div>IE (New)</div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <p>Sorry for the inconvenience!</p>
-            </div>   
-        <![endif]-->
-
-
-        
+    
         <!-- Javascript Libraries -->
         <script src="{{ asset('assets/vendors/bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
@@ -412,12 +134,6 @@
         <script src="{{ asset('assets/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/summernote/dist/summernote-updated.min.js') }}"></script>
-
-
-        <!-- Placeholder for IE9 -->
-        <!--[if IE 9 ]>
-            <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
-        <![endif]-->
         
         <script src="{{ asset('assets/vendors/bower_components/chosen/chosen.jquery.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/fileinput/fileinput.min.js') }}"></script>

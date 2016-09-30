@@ -21,7 +21,8 @@
 
     @endsection
 
-   @section('leftNavbar') 
+ 
+    @section('leftNavbar')
         <aside id="s-main-menu" class="sidebar">
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
@@ -41,41 +42,44 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Home</a>
+                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Beranda</a>
                     </li>
 
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('/createsurvey') }}"> Create new</a>
+                                <a href="{{ url('/create') }}"> Buat Baru</a>
                             </li>
-                            @foreach($survey as $f_survey)
-                                <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
+                            @foreach($survey as $survei)
+                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{$id_survey}}</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
                         <ul>
-                            @foreach($tahapan_survey as $f_tahapan)
-                            <li>
-                                <a href="{{ url($id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan -> nama_tahapan }}</a>
-                            </li>
-                            @endforeach
+                                @foreach($tahapanSurvey2 as $f_tahapan)
+                                <li>
+                                    <?php
+                                        $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
+                                    ?>
+                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                </li>
+                                @endforeach
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($survey->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $survey->id_survey }}</a>
+                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administrasi {{ $survey2->id_survey }}</a>
                     </li>
                     @if($user -> level_user == "1")
                     <li>
-                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Pengguna</a>
                     </li>
                     @endif
                     <li class="sub-menu">
-                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
-                        <ul>
+                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> Riwayat</a>
+                       <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
                                 <ul>
@@ -95,7 +99,6 @@
                 </ul>
         </aside>
     @endsection
-
 
     @section('content')
         <section id="content">
@@ -159,7 +162,7 @@
                         <form action="{{url($id_survey.'/administrasi/'.$user_hakakses.'/edit')}}" method="post" name="formedittahapan">
                         {!! csrf_field() !!}
                         <?php 
-                            $get_hakakses = DB::table($id_survey.'-hakakses')->where('id_user', $user_hakakses)->first();
+                            $get_hakakses = DB::table($id_survey.'-hakakses')->where('id_users', $user_hakakses)->first();
                         ?>
                             <div class="form-group">
                                 <label class="control-label" for="{{$wilayah->nama_wilayah}}">{{$wilayah->nama_wilayah}} </label>
@@ -171,14 +174,14 @@
                                     ?>
                                     @foreach($data_wilayah as $f_data_wilayah)
                                         <?php 
-                                            $cek_hakakses_wil = DB::table($id_survey.'-hakakses-wilayah')->where('id_user', $user_hakakses)->where('id_'.$wilayah->nama_wilayah, $f_data_wilayah->$header_data_wilayah[0])->first();
+                                            $cek_hakakses_wil = DB::table($id_survey.'-hakakses-wilayah')->where('id_users', $user_hakakses)->where('id_'.$wilayah->nama_wilayah, $f_data_wilayah->$header_data_wilayah[0])->first();
                                         ?>
                                         <option value="{{$f_data_wilayah->$header_data_wilayah[0]}}" <?php if($cek_hakakses_wil) echo "selected"; ?> >{{ $f_data_wilayah->$header_data_wilayah[$count-1] }}</option> 
                                     @endforeach
                                 </select>
                             </div>
 
-                            <?php $nip = DB::table('users')->where('username', $get_hakakses->id_user)->first(); ?>
+                            <?php $nip = DB::table('users')->where('username', $get_hakakses->id_users)->first(); ?>
                             <input type="text" id="nip" name="nip" required="required" class="hidden" value="{{$nip->nip_user}}">
                                         
                             <div class="form-group">

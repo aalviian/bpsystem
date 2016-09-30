@@ -12,7 +12,7 @@
                 <div class="smm-header">
                     <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
                 </div>
- 
+
                 <ul class="smm-alerts">
                     <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
                         <i class="zmdi zmdi-email"></i>
@@ -27,27 +27,27 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/') }}"><i class="zmdi zmdi-home"></i> Home</a>
+                        <a href="{{ url('home') }}"><i class="zmdi zmdi-home"></i> Beranda</a>
                     </li>
-                    
+
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('createsurvey') }}"> Create new</a>
+                                <a href="{{ url('create') }}"> Buat Baru</a>
                             </li>
-                            @foreach($survey as $survei)
-                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                            @foreach($survey as $f_survey)
+                                <li><a href="{{ url($f_survey->id_survey) }}">{{$f_survey->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     @if($user -> level_user == "1")
                     <li>
-                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Pengguna</a>
                     </li>
                     @endif
                     <li class="sub-menu">
-                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
+                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> Riwayat</a>
                         <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
@@ -66,14 +66,14 @@
         <section id="content">
             <div class="container">
                 <ul class="breadcrumb" style="margin-bottom: 5px;">
-                  <li><a href="{{URL('/')}}">Home</a></li>
-                  <li class="active">Create Survey</li>
+                  <li><a href="{{URL('/')}}">Beranda</a></li>
+                  <li class="active">Buat Baru</li>
                 </ul>
                 <div class="card">
                     <div class="card-body card-padding">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Form Monitoring/Survey <small>Create</small></h2>        
+                                <h2>Form Pembuatan Survey</h2>    
                                 <div class="clearfix"></div>
                             </div>
                         
@@ -86,8 +86,8 @@
                                           <a href="#step-1">
                                             <span class="step_no">1</span>
                                             <span class="step_descr">
-                                                Step 1<br />
-                                                <small>Monitoring/Survey</small>
+                                                <b>Tahap 1<br />
+                                                <small>Detil Survey</small></b>
                                             </span>
                                           </a>
                                         </li>
@@ -95,8 +95,8 @@
                                           <a href="#step-2">
                                             <span class="step_no">2</span>
                                             <span class="step_descr">
-                                                Step 2<br />
-                                                <small>Tahapan</small>
+                                                <b>Tahap 2<br />
+                                                <small>Tahapan</small></b>
                                             </span>
                                           </a>
                                         </li>
@@ -104,8 +104,8 @@
                                           <a href="#step-3">
                                             <span class="step_no">3</span>
                                             <span class="step_descr">
-                                                Step 3<br />
-                                                <small>Cakupan Wilayah</small>
+                                                <b>Tahap 3<br />
+                                                <small>Cakupan Wilayah</small></b>
                                             </span>
                                           </a>
                                         </li>
@@ -114,7 +114,6 @@
                                     <form id="formSurvey" class="form-horizontal form-label-left" action="{{url('createsurvey')}}" method="post" enctype="multipart/form-data">
                                     {!! csrf_field() !!}
                                         <div id="step-1">
-                                            <h2 class="StepTitle">Step 1 Monitoring / Survey</h2>
                                             <br>
                                             <div class="form-group">
                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="surveyname">Nama Survey </label>
@@ -146,7 +145,6 @@
                                         </div>
 
                                         <div id="step-2">
-                                            <h2 class="StepTitle">Step 2 Tahapan
                                                 <input class="pull-right" type="button" name="remove_tahapan" value="-" id="remove_tahapan">
                                                 <input class="pull-right" type="button" name="add_tahapan" value="+" data-toggle="modal" href="#modalTambahTahapan">
                                             </h2>

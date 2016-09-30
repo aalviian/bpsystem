@@ -34,7 +34,7 @@ class SurveyController extends Controller
 
     //CREATE
     public function create(){
-        $now = new DateTime();
+        $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
         $date = date('Y');
         $dateTime = date('Y-m-d');
         $id_survey = Request::get('surveyidentity');
@@ -205,8 +205,6 @@ class SurveyController extends Controller
             $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
 
             return view('role.superadmin.survey', compact('user', 'id_survey', 'survey','tahapanSurvey2','survey2'));
-        } else { 
-            return redirect('login');
         }
         $users=DB::table($id_survey.'-hakakses')->where('id_users', Session::get('username'))->first();
         if($users) {   
@@ -227,6 +225,107 @@ class SurveyController extends Controller
             Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
             return back();
         }
+    }
+
+    //FORM EDIT SURVEY
+    public function formEdit($id_survey){
+        $user = DB::table('users')->where('username', session::get('username'))->first();
+        $level=$user->level_user;
+
+        $survey=DB::table('survey')->get();
+        $this_survey=DB::table('survey')->where('id_survey', $id_survey)->first();
+        $this_tahapan=DB::table('tahapansurvey')->where('id_survey', $id_survey)->get();
+        if($level == "1") {
+            return view('role.superadmin.editsurvey', compact('user', 'survey', 'this_survey', 'id_survey', 'this_tahapan'));
+        }else{
+            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
+            return back();
+        } 
+    }
+
+    //EDIT SURVEY
+    public function editSurvey($id_survey){
+        $user = DB::table('users')->where('username', session::get('username'))->first();
+
+        $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+        $user_login = Session::get('username');
+        
+        $in_id_survey = Request::get('surveyidentity');
+        $nama_survey = Request::get('surveyname');
+        $survey_mulai = Request::get('tgl_mulai');
+        $survey_selesai = Request::get('tgl_selesai');
+
+        $id_tahapan = Request::get('id_tahapan');
+        $nama_tahapan = Request::get('nama_tahapan');
+        $tahapan_mulai = Request::get('tahapan_mulai');
+        $tahapan_selesai = Request::get('tahapan_selesai');
+        
+        $this_survey = DB::table('survey')->where('id_survey', $id_survey)->first();
+
+        foreach ($id_tahapan as $f_id_tahapan){
+            if($survey_selesai<$tahapan_selesai[$f_id_tahapan-1] or $survey_mulai>$survey_selesai or $tahapan_mulai[$f_id_tahapan-1]>$tahapan_selesai[$f_id_tahapan-1]){
+                Alert::error("Maaf, tanggal yang anda masukkan salah")->persistent("Oke");
+                return redirect('survey/'.$id_survey.'/edit');
+            }
+        }
+        
+
+        if($this_survey->id_survey==$in_id_survey)
+        {
+            DB::table('survey')->where('id_survey', $id_survey)->update(['nama_survey' => $nama_survey, 'tgl_selesai' => $survey_selesai, 'tgl_update' => $now, 'user_update' => $user_login]);
+            $cek_survey=0;
+        } else
+        {
+            $from = $id_survey.'-hakakses';
+            $to = $in_id_survey.'-hakakses';
+            $fromWil = $id_survey.'-hakakses-wilayah';
+            $toWil = $in_id_survey.'-hakakses-wilayah';
+            $cek_survey = 1;
+            
+            if($from!=$to)
+                Schema::rename($from, $to);
+
+            if($fromWil!=$toWil)
+                Schema::rename($fromWil,$toWil); 
+
+            $this_wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
+            foreach ($this_wilayah as $f_this_wilayah) {
+                $from = $id_survey.'-'.$f_this_wilayah->nama_wilayah;
+                $to = $in_id_survey.'-'.$f_this_wilayah->nama_wilayah;
+
+                DB::table('wilayah')->where('id_wilayah', $f_this_wilayah->id_wilayah)->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'tgl_update' => $now, 'user_update' => $user_login]);
+                if($from!=$to)
+                    Schema::rename($from ,$to);
+            }
+
+            DB::table('survey')->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'nama_survey' => $nama_survey, 'tgl_selesai' => $survey_selesai, 'tgl_update' => $now, 'user_update' => $user_login]);
+                
+                
+        }
+
+        foreach ($id_tahapan as $f_id_tahapan) {
+            $f_tahapan = DB::table('tahapansurvey')->where('id_tahapan', $f_id_tahapan)->where('id_survey', $id_survey)->first();
+            
+            $from = $id_survey.'-'.$f_tahapan->nama_tahapan;
+            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1];
+            if($from!=$to and $cek_survey)
+                Schema::rename($from, $to); 
+
+            $from = $id_survey.'-'.$f_tahapan->nama_tahapan.'-hist';
+            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1].'-hist';
+            if($from!=$to and $cek_survey)
+                Schema::rename($from, $to); 
+
+            $from = $id_survey.'-'.$f_tahapan->nama_tahapan.'-histgl';
+            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1].'-histgl';
+            if($from!=$to and $cek_survey)
+                Schema::rename($from, $to);
+    
+            DB::table('tahapansurvey')->where('id_tahapan', $f_id_tahapan)->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'nama_tahapan'=>$nama_tahapan[$f_id_tahapan-1],'tgl_selesai'=>$tahapan_selesai[$f_id_tahapan-1], 'tgl_update' => $now, 'user_update' => $user_login]);
+        }
+
+        return redirect('survey/'.$id_survey);
+        
     }
 
 
@@ -414,106 +513,5 @@ class SurveyController extends Controller
             Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
             return back();
         } 
-    }
-   //FORM EDIT SURVEY
-    public function formEdit($id_survey){
-        $user = DB::table('users')->where('username', session::get('username'))->first();
-        $level=$user->level_user;
-        $survey=DB::table('survey')->get();
-        $survey2 = DB::table('survey')->where('id_survey', $id_survey) -> first();
-        $tahapanSurvey2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey) -> get();
-        $this_survey=DB::table('survey')->where('id_survey', $id_survey)->first();
-        $this_tahapan=DB::table('tahapansurvey')->where('id_survey', $id_survey)->get();
-        if($level == "1") {
-            return view('role.superadmin.editsurvey', compact('user', 'survey','survey2','tahapanSurvey2', 'this_survey', 'id_survey', 'this_tahapan'));
-        }else{
-            Alert::error("Maaf, anda tidak punya hak akses")->persistent("Oke");
-            return back();
-        } 
-    }
-
-    //EDIT SURVEY
-    public function editSurvey($id_survey){
-        $user = DB::table('users')->where('username', session::get('username'))->first();
-
-        $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
-        $user_login = Session::get('username');
-        
-        $in_id_survey = Request::get('surveyidentity');
-        $nama_survey = Request::get('surveyname');
-        $survey_mulai = Request::get('tgl_mulai');
-        $survey_selesai = Request::get('tgl_selesai');
-
-        $id_tahapan = Request::get('id_tahapan');
-        $nama_tahapan = Request::get('nama_tahapan');
-        $tahapan_mulai = Request::get('tahapan_mulai');
-        $tahapan_selesai = Request::get('tahapan_selesai');
-        
-        $this_survey = DB::table('survey')->where('id_survey', $id_survey)->first();
-
-        foreach ($id_tahapan as $f_id_tahapan){
-            if($survey_selesai<$tahapan_selesai[$f_id_tahapan-1] or $survey_mulai>$survey_selesai or $tahapan_mulai[$f_id_tahapan-1]>$tahapan_selesai[$f_id_tahapan-1]){
-                Alert::error("Maaf, tanggal yang anda masukkan salah")->persistent("Oke");
-                return redirect('survey/'.$id_survey.'/edit');
-            }
-        }
-        
-
-        if($this_survey->id_survey==$in_id_survey)
-        {
-            DB::table('survey')->where('id_survey', $id_survey)->update(['nama_survey' => $nama_survey, 'tgl_selesai' => $survey_selesai, 'tgl_update' => $now, 'user_update' => $user_login]);
-            $cek_survey=0;
-        } else
-        {
-            $from = $id_survey.'-hakakses';
-            $to = $in_id_survey.'-hakakses';
-            $fromWil = $id_survey.'-hakakses-wilayah';
-            $toWil = $in_id_survey.'-hakakses-wilayah';
-            $cek_survey = 1;
-            
-            if($from!=$to)
-                Schema::rename($from, $to);
-
-            if($fromWil!=$toWil)
-                Schema::rename($fromWil,$toWil); 
-
-            $this_wilayah = DB::table('wilayah')->where('id_survey', $id_survey)->get();
-            foreach ($this_wilayah as $f_this_wilayah) {
-                $from = $id_survey.'-'.$f_this_wilayah->nama_wilayah;
-                $to = $in_id_survey.'-'.$f_this_wilayah->nama_wilayah;
-
-                DB::table('wilayah')->where('id_wilayah', $f_this_wilayah->id_wilayah)->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'tgl_update' => $now, 'user_update' => $user_login]);
-                if($from!=$to)
-                    Schema::rename($from ,$to);
-            }
-
-            DB::table('survey')->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'nama_survey' => $nama_survey, 'tgl_selesai' => $survey_selesai, 'tgl_update' => $now, 'user_update' => $user_login]);
-                
-                
-        }
-
-        foreach ($id_tahapan as $f_id_tahapan) {
-            $f_tahapan = DB::table('tahapansurvey')->where('id_tahapan', $f_id_tahapan)->where('id_survey', $id_survey)->first();
-            
-            $from = $id_survey.'-'.$f_tahapan->nama_tahapan;
-            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1];
-            if($from!=$to and $cek_survey)
-                Schema::rename($from, $to); 
-
-            $from = $id_survey.'-'.$f_tahapan->nama_tahapan.'-hist';
-            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1].'-hist';
-            if($from!=$to and $cek_survey)
-                Schema::rename($from, $to); 
-
-            $from = $id_survey.'-'.$f_tahapan->nama_tahapan.'-histgl';
-            $to = $in_id_survey.'-'.$nama_tahapan[$f_id_tahapan-1].'-histgl';
-            if($from!=$to and $cek_survey)
-                Schema::rename($from, $to);
-    
-            DB::table('tahapansurvey')->where('id_tahapan', $f_id_tahapan)->where('id_survey', $id_survey)->update(['id_survey' => $in_id_survey, 'nama_tahapan'=>$nama_tahapan[$f_id_tahapan-1],'tgl_selesai'=>$tahapan_selesai[$f_id_tahapan-1], 'tgl_update' => $now, 'user_update' => $user_login]);
-        }
-
-        return redirect($in_id_survey);
-        
     }
 }

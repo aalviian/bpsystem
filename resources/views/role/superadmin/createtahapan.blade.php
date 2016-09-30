@@ -31,7 +31,7 @@
                     </li>
 
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
                         <ul>
                             <li>
                                 <a href="{{ url('/createsurvey') }}"> Create new</a>

@@ -56,44 +56,44 @@
 
                 <ul class="main-menu">
                     <li>
-                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Beranda</a>
+                        <a href="{{ url('/home') }}"><i class="zmdi zmdi-home"></i> Home</a>
                     </li>
 
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring Survey</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i> Monitoring & Survey</a>
                         <ul>
                             <li>
-                                <a href="{{ url('/create') }}"> Buat Baru</a>
+                                <a href="{{ url('/createsurvey') }}"> Create new</a>
                             </li>
                             @foreach($survey as $survei)
-                                <li><a href="{{ url($survei->id_survey) }}">{{$survei->id_survey}}</a></li>
+                                <li><a href="{{ url('survey/'.$survei->id_survey) }}">{{$survei->id_survey}}</a></li>
                             @endforeach
                         </ul>
                     </li>
                     <li class="sub-menu">
-                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $survey2->id_survey }}</a>
+                        <a  href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-format-underlined"></i>Input Data {{ $id_survey }}</a>
                         <ul>
                                 @foreach($tahapanSurvey2 as $f_tahapan)
                                 <li>
                                     <?php
                                         $survei2 = DB::table('tahapansurvey') -> where('id_survey', $id_survey)-> where('id_tahapan', $f_tahapan->id_tahapan) -> first();
                                     ?>
-                                    <a href="{{ url($survei2->id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
+                                    <a href="{{ url($id_survey.'/'.$f_tahapan->id_tahapan.'/input') }}">{{ $f_tahapan->nama_tahapan }}</a>
                                 </li>
                                 @endforeach
                         </ul>
                     </li>
                     <li @yield('administration')>
-                        <a href="{{ url($survey2->id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administrasi {{ $survey2->id_survey }}</a>
+                        <a href="{{ url($id_survey.'/administrasi') }}"><i class="zmdi zmdi-swap-alt"></i> Administration {{ $id_survey }}</a>
                     </li>
                     @if($user -> level_user == "1")
                     <li>
-                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Pengguna</a>
+                        <a href="{{ url('user') }}" ><i class="zmdi zmdi-home"></i> Users</a>
                     </li>
                     @endif
                     <li class="sub-menu">
-                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> Riwayat</a>
-                       <ul>
+                        <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-trending-up"></i> History</a>
+   2                    <ul>
                             <li class="sub-menu">
                                 <a href="" data-ma-action="submenu-toggle">SUKERNAS</a>
                                 <ul>
@@ -116,48 +116,34 @@
 
     @section('content')
 
-    <?php
-      date_default_timezone_set("Asia/Jakarta"); 
-      $now = date('Y-m-d'); //Returns IST  
-      $tglskrg = date_create($now);
-      $tgldeadline = date_create($survey2->tgl_selesai);
-      $interval = date_diff($tgldeadline, $tglskrg); 
-    ?>
-
     <section id="content">
                 <div class="container">                    
                     <ol class="breadcrumb" style="margin-bottom: 5px;">
-                      <li><a href="{{URL('/')}}">Beranda</a></li>
+                      <li><a href="{{URL('/')}}">Home</a></li>
                       <li>{{$id_survey}}</li>
                     </ol>
                     <div class="card">
                        <div class="card-header">
-                        @if ($interval->format('%a') > 0)
-                            @if ( $interval->format('%R') == "+" )
-                                <h2><font color="red">Ditutup!</font><h3>Monitoring {{$survey2->nama_survey}}</h3></h2>
-                            @elseif ( $interval->format('%R') == "-" )
-                                <h2>"tersisa {{ $interval->format('%a') }} hari lagi"<h3>Monitoring {{$survey2->nama_survey}}</h3></h2>
-                            @endif 
-                        @else ($interval->format('%a') == 0)
-                                <h2>Dashboard <h3>Monitoring {{$survey2->nama_survey}}, <font color="red">Deadline!</font></h3></h2>
-                        @endif
-                        <ul class="actions">
-                            <a href="{{url($id_survey.'/edit')}}" class="btn palette-Teal bg">Edit</a>                            
-                            <div class="btn-group">
-                                <button class="btn palette-Teal bg">Program Tahapan</button>
-                                <button type="button" class="btn palette-Teal bg dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Split button dropdowns</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    @foreach($tahapanSurvey2 as $tahapan)
-                                        @if($tahapan->id_survey==$survey2->id_survey)
-                                            <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                          </div>
-                        </ul>
+                            <h2>Dashboard <h3>Monitoring {{$survey2->nama_survey}}</h3></h2>
+
+                            <ul class="actions">
+                                <a href="{{url('survey/'.$id_survey.'/edit')}}" class="btn palette-Teal bg">Edit</a>                         
+                                <div class="btn-group">
+                                    <button class="btn palette-Teal bg">Program Kegiatan</button>
+                                    <button type="button" class="btn palette-Teal bg dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Split button dropdowns</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @foreach($tahapanSurvey2 as $tahapan)
+                                            @if($tahapan->id_survey==$survey2->id_survey)
+                                                <li><a href="{{url($survey2->id_survey.'/'.$tahapan->id_tahapan)}}">{{$tahapan->nama_tahapan}}</a></li>
+                                            @endif
+                                        @endforeach
+                                    </ul>
+
+                              </div>
+                            </ul>
                         </div>
                     </div>
                     
@@ -227,7 +213,7 @@
                     ?>
                     <div class="card">
                         <div class="card-header">
-                          <h2>Batas Akhir</h2>
+                          <h2>Batas Deadline</h2>
                           <br>
                           <h2>Tiap - tiap tahapan </h2>
                         </div> 
@@ -244,15 +230,15 @@
                                 ?>
                                 @if ($interval->format('%a') > 0)
                                     @if ( $interval->format('%R') == "+" )
-                                        <h3><p><font color="red">Ditutup!</font></p></h3>
+                                        <h3><p><font color="red">Closed! {{ $interval->format('H%R%a') }}</font></p></h3>
                                     @elseif ( $interval->format('%R') == "-" )
-                                        <h3><p><font color="blue">Ongoing</font></p></h3>    
+                                        <h3><p><font color="blue">Ongoing {{ $interval->format('H%R%a') }}</font></p></h3>    
                                     @endif  
                                 @else ($interval->format('%a') == 0)
                                     <h3><p><font color="orange">Deadline!</font></p></h3>
                                 @endif
-                                <p>Sekarang : {{ $now }}</p>
-                                <p>Selesai : {{$tahapan->tgl_selesai}}</p>
+                                <p>Deadline : {{$tahapan->tgl_selesai}}</p>
+                                <p>Now : {{ $now }}</p>
                             </div>
                             @endforeach
                           </div>
